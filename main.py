@@ -13,10 +13,11 @@ def main():
     stay_move_main_person = []
     clock = pygame.time.Clock()
 
-    for i in range(4):
-        stay_move_main_person.append(pygame.image.load(f"src\\sprite\\mainPerson\\stay{i + 1} 70x140.png"))
+    for i in range(12):
+        stay_move_main_person.append(pygame.image.load(f"src\\sprite\\mainPerson2\\run{i + 1}-right.png"))
 
     exit_game = False
+    index = 0
     while not exit_game:
         screen.fill(background_color)
         pygame.draw.rect(screen, "dark gray", (0, 500, 900, 100))
@@ -27,10 +28,9 @@ def main():
             if event.type == pygame.QUIT:
                 exit_game = True
 
-        for i in range(2):
-            for image in stay_move_main_person:
-                screen.blit(image, (70, 360))
-                time.sleep(1)
+        if index >= 5: index = 0
+        screen.blit(stay_move_main_person[index], (70, 500 - stay_move_main_person[index].get_height()))
+        index += 1
 
    #     screen.blit(stay_move_main_person[0], (70, 360))
     #    screen.blit(stay_move_main_person[1], (70, 360))
@@ -38,7 +38,7 @@ def main():
       #  screen.blit(stay_move_main_person[4], (70, 360))
 
         pygame.display.flip()
-        clock.tick(20)
+        clock.tick(15)
 
 
 if __name__ == '__main__':
