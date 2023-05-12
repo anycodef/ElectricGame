@@ -1,18 +1,20 @@
-
 # dependents
 from pygame.display import set_mode, set_caption
 from pygame import quit
 from sys import exit
 
 # states
-from menuState import MenuState
+from .menuState import MenuState
+
+# code
+from code.globals.codeReturn import code_return
 
 
 # This class is a main surface where put all graphics.
 class Screen:
     def __init__(self):
         self.__width = 900
-        self.__height = 700
+        self.__height = 600
 
         self.obj = set_mode((self.__width, self.__height))
         set_caption("ElectricGame")
@@ -29,9 +31,9 @@ class StateManager:
             "menu": MenuState
         }
 
-        self.__class_state = self.__states["menu"]      # save a class for instance.
-        self.__instance_new_state = True        # flag which indicate if action of instance will do
-        self.__objet_state = None           # Save of obj of class.
+        self.__class_state = self.__states["menu"]  # save a class for instance.
+        self.__instance_new_state = True  # flag which indicate if action of instance will do
+        self.__objet_state = None  # Save of obj of class.
 
         self.__exitState = False
         self.__list_key_and_value_return_state = None
@@ -50,7 +52,7 @@ class StateManager:
             self.__list_key_and_value_return_state = self.__objet_state.run()
 
             # check the key and value returned
-            if self.__list_key_and_value_return_state[0] == 1:
+            if code_return[self.__list_key_and_value_return_state[0]] == 1:
                 self.__exitState = True
 
         quit()
