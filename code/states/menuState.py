@@ -71,7 +71,7 @@ class MenuState:
         self.clock = Clock()
         self.FPS = 60
 
-        self.list_for_return = [None, None]
+        self.list_for_return = []
 
     def run(self) -> list:
 

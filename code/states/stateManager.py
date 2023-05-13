@@ -51,7 +51,11 @@ class StateManager:
             # Run state and way for list return. This list must have a two elements
             self.__list_key_and_value_return_state = self.__objet_state.run()
 
+<<<<<<< HEAD
             # Check the key and value returned
+=======
+            # check the key and value returned
+>>>>>>> 106fcd3f1f582d56a47ea7a6f9d54945ec76e6cc
             if code_return[self.__list_key_and_value_return_state[0]] == 1:
                 self.__exitState = True
 
