@@ -3,4 +3,6 @@
 
 code_return = {
     'exitProgram': 1,
+    'executeState': 2
 }
+
