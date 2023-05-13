@@ -47,6 +47,7 @@ class MenuState:
                 self.exitState = True
 
             # manage an event under the menu state
+
             for event in get_event():
                 if event.type == QUIT:
                     self.exitState = True
