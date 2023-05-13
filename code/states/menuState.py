@@ -55,7 +55,7 @@ class ButtonManager:
         self.list_pos_y = []
 
     def init_buttons(self):
-        pass    
+        pass
 
     def run(self):
         pass
