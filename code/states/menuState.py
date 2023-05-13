@@ -3,66 +3,12 @@ from pygame.time import Clock
 from pygame.event import get as get_event
 from pygame import QUIT
 
-# for buttons
-from pygame.font import SysFont
-from pygame.mouse import get_pos, get_pressed
-
-
-class Button:
-    def __init__(self, text: str, color_text, color_text_selected, size_text, screen, posy, state):
-        self.text = text
-        self.color = color_text
-        self.color_text_unselected = color_text
-        self.color_text_selected = color_text_selected
-        self.size = size_text
-
-        self.font = SysFont("arial", self.size)
-        self.text = self.font.render(self.text, False, self.color)
-
-        self.screen = screen
-        self.posY = posy
-        self.posX = (self.screen.get_size()[0] - self.text.get_size()[0]) / 2
-
-        self.state_for_return = None
-        self.state = state
-
-    # This function return a new state
-    def run(self):
-
-        # check if the mouse is in the button and if it's pressed
-        if (self.posX <= get_pos()[0] <= self.posX + self.text.get_size()[0]) and \
-                (self.posY <= get_pos()[1] <= self.posY + self.text.get_size()[1]):
-            self.color = self.color_text_selected
-
-            if get_pressed()[0]:
-                self.state_for_return = self.state
-        else:
-            self.color = self.color_text_unselected
-
-        # show button in the screen
-        self.screen.blit(self.text, (self.posX, self.posY))
-
-        return self.state_for_return
-
-
-class ButtonManager:
-    def __init__(self, list_text_button):
-        self.list_text_button = list_text_button
-        self.number_buttons = self.list_text_button.__len__()
-
-        # style
-        self.padding_y = 5
-        self.list_pos_y = []
-
-    def init_buttons(self):
-        pass
-
-    def run(self):
-        pass
+from code.widgets.buttons import ButtonManager
 
 
 class MenuState:
     def __init__(self, screen):
+
         self.screen = screen
         self.background_color = "black"
 
@@ -71,7 +17,20 @@ class MenuState:
         self.clock = Clock()
         self.FPS = 60
 
-        self.list_for_return = []
+        self.list_for_return = [None, None]
+
+        # style general button
+        self.list_text_and_status = [["Play", ['executeState', "GameState"]],
+                                     ["Rules", ['executeState', "RulesState"]],
+                                     ["Exit", ['exitProgram', None]]]
+
+        self.color_text = "white"
+        self.color_selected = "red"
+        self.size_text = 30
+
+        # buttons - manager
+        self.managerButtons = ButtonManager(self.list_text_and_status, self.color_text, self.color_selected, self.size_text, self.screen)
+        self.managerButtons.init_buttons()
 
     def run(self) -> list:
 
@@ -81,7 +40,13 @@ class MenuState:
             # Give a color to background of the menu in this case black
             self.screen.fill(self.background_color)
 
-            # manage a event under the menu state
+            # show buttons
+            state_selected = self.managerButtons.run()
+            if state_selected:
+                self.list_for_return = state_selected
+                self.exitState = True
+
+            # manage an event under the menu state
             for event in get_event():
                 if event.type == QUIT:
                     self.exitState = True
@@ -91,4 +56,3 @@ class MenuState:
             self.clock.tick(self.FPS)
 
         return self.list_for_return
-

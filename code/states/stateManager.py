@@ -1,6 +1,6 @@
 # dependents
 from pygame.display import set_mode, set_caption
-from pygame import quit
+from pygame import quit, init as init_pygame
 from sys import exit
 
 # states
@@ -27,11 +27,15 @@ class Screen:
 
 class StateManager:
     def __init__(self):
+        init_pygame()
+
         self.__states = {
-            "menu": MenuState
+            "MenuState": MenuState,
+            "GameState": None,
+            "RuleState": None
         }
 
-        self.__class_state = self.__states["menu"]  # save a class for instance.
+        self.__class_state = self.__states["MenuState"]  # save a class for instance.
         self.__instance_new_state = True  # flag which indicate if action of instance will do
         self.__objet_state = None  # Save of obj of class.
 
@@ -48,12 +52,15 @@ class StateManager:
                 self.__objet_state = self.__class_state(self.__screen.obj)
                 self.__instance_new_state = False
 
-            # Run state and way for list return. This list must have a two elements
+            # Run state and way for list return. This list must have two elements
             self.__list_key_and_value_return_state = self.__objet_state.run()
 
             # check the key and value returned
             if code_return[self.__list_key_and_value_return_state[0]] == 1:
                 self.__exitState = True
+            elif code_return[self.__list_key_and_value_return_state[0]] == 2:
+                self.__instance_new_state = True
+                self.__class_state = self.__states[self.__list_key_and_value_return_state[1]]
 
         quit()
         exit()
