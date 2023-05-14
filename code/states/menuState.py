@@ -1,36 +1,44 @@
 from pygame.display import flip
-from pygame.time import Clock
 from pygame.event import get as get_event
 from pygame import QUIT
 
 from code.widgets.buttons import ButtonManager
+from code.globals.generalState import BasicState
+
+from pygame.image import load as load_img
+
+# test --------------------------------------
+from code.globals.Effects.arcVoltaic import ArcVoltaic
+from code.globals.Math.point import Point
+from random import randint
+# test --------------------------------------
 
 
-class MenuState:
+# This state define an interface where
+class MenuState(BasicState):
     def __init__(self, screen):
-
-        self.screen = screen
-        self.background_color = "black"
-
-        self.exitState = False
-
-        self.clock = Clock()
-        self.FPS = 60
-
-        self.list_for_return = [None, None]
+        BasicState.__init__(self, screen)
 
         # style general button
-        self.list_text_and_status = [["Play", ['executeState', "GameState"]],
-                                     ["Rules", ['executeState', "RulesState"]],
+        self.list_text_and_status = [["Play", ['executeState', "GameStateLevels"]],
+                                     ["Rules", ['executeState', "RuleState"]],
                                      ["Exit", ['exitProgram', None]]]
 
         self.color_text = "white"
-        self.color_selected = "red"
+        self.color_selected = "blue"
         self.size_text = 30
 
         # buttons - manager
         self.managerButtons = ButtonManager(self.list_text_and_status, self.color_text, self.color_selected, self.size_text, self.screen)
         self.managerButtons.init_buttons()
+
+        # images
+        # self.image_cable_right_top = load_img("code\\src\\menuImg\\cable-right-top.png")
+        # self.image_cable_left_bottom = load_img("code\\src\\menuImg\\cable-left-bottom.png")
+
+        # test --------------------------------------
+        self.arc1 = ArcVoltaic(self.screen)
+        # test --------------------------------------
 
     def run(self) -> list:
 
@@ -42,12 +50,15 @@ class MenuState:
 
             # show buttons
             state_selected = self.managerButtons.run()
-            if state_selected:
+            if state_selected:  # check whether a button is selected and therefore is returned a list
                 self.list_for_return = state_selected
                 self.exitState = True
 
-            # manage an event under the menu state
+            # test --------------------------------------
+            self.arc1.show(2, endpoint1=Point(x=-100, y=100), endpoint2=Point(x=20, y=20), radio=randint(10, 40), intensity=randint(1, 3))
+            # test --------------------------------------
 
+            # manage an event under the menu state
             for event in get_event():
                 if event.type == QUIT:
                     self.exitState = True

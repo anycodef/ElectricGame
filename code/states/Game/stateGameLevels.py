@@ -1,22 +1,17 @@
 from code.globals.generalState import BasicState
 from pygame.event import get as get_queue_event
+from pygame.display import flip
 from pygame import QUIT
 
-# delete
-from pygame.display import flip
 
-
-class StateRule(BasicState):
+class StateGameLevels(BasicState):
     def __init__(self, screen):
         BasicState.__init__(self, screen)
-        self.background_color = "red"
 
     def run(self):
         while not self.exitState:
-            # fill all windows with a color
             self.screen.fill(self.background_color)
 
-            # manager of events
             for event in get_queue_event():
                 if event.type == QUIT:
                     self.exitState = True
@@ -26,4 +21,3 @@ class StateRule(BasicState):
             self.clock.tick(self.FPS)
 
         return self.list_for_return
-
