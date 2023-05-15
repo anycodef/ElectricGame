@@ -9,7 +9,7 @@ from .stateRule import StateRule
 from .Game.stateGameLevels import StateGameLevels
 
 # code for to standardized mode of return
-from code.globals.codeReturn import code_return
+from code.globals.constanst import code_return
 
 
 # This class is a main surface where put all graphics.

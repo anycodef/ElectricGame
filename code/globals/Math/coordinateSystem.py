@@ -13,5 +13,11 @@ class CoordSys:
 
         return [pygame_x, pygame_y]
 
+    def coord_pygame_to_coord_system(self, py_x, py_y) -> list[float, float]:
+        sys_x = py_x - self.width_windows * 0.5
+        sys_y = py_y - self.height_windows * self.percentage_y_positive_axes
+
+        return [sys_x, sys_y]
+
 
 

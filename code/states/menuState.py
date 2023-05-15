@@ -6,11 +6,15 @@ from code.widgets.buttons import ButtonManager
 from code.globals.generalState import BasicState
 
 from pygame.image import load as load_img
+from code.globals.constanst import path_root_project
 
 # test --------------------------------------
 from code.globals.Effects.arcVoltaic import ArcVoltaic
 from code.globals.Math.point import Point
+from code.globals.Math.coordinateSystem import CoordSys
 from random import randint
+from pygame.mouse import get_pos
+from pygame.transform import scale
 # test --------------------------------------
 
 
@@ -32,12 +36,9 @@ class MenuState(BasicState):
         self.managerButtons = ButtonManager(self.list_text_and_status, self.color_text, self.color_selected, self.size_text, self.screen)
         self.managerButtons.init_buttons()
 
-        # images
-        # self.image_cable_right_top = load_img("code\\src\\menuImg\\cable-right-top.png")
-        # self.image_cable_left_bottom = load_img("code\\src\\menuImg\\cable-left-bottom.png")
-
         # test --------------------------------------
         self.arc1 = ArcVoltaic(self.screen)
+        self.coord = CoordSys(self.screen.get_width(), self.screen.get_height())
         # test --------------------------------------
 
     def run(self) -> list:
@@ -55,8 +56,10 @@ class MenuState(BasicState):
                 self.exitState = True
 
             # test --------------------------------------
-            self.arc1.show(2, endpoint1=Point(x=-100, y=100), endpoint2=Point(x=20, y=20), radio=randint(10, 40), intensity=randint(1, 3))
+            self.arc1.show(2, endpoint1=Point(x=-100, y=100), endpoint2=Point(*self.coord.coord_pygame_to_coord_system(*get_pos())), radio=randint(10, 40), intensity=randint(1, 3))
             # test --------------------------------------
+
+            self.screen.blit(self.image_cable_left_bottom, (10, 10))
 
             # manage an event under the menu state
             for event in get_event():

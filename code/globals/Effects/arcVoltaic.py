@@ -3,6 +3,8 @@ from ..Math.point import Point
 from ..Math.vect2d import Vect2d
 from ..Math.coordinateSystem import CoordSys
 
+from random import choice
+
 
 class ArcVoltaic:
     def __init__(self, screen):
@@ -17,7 +19,7 @@ class ArcVoltaic:
         self.__turning_points = []
 
         # style
-        self.__color = "light blue"
+        self.__list_color = ["light blue", "blue", "orange", "green"]
 
         # layout coordinate system
         self.__layout_coord_system = CoordSys(self.__screen.get_width(), self.__screen.get_height())
@@ -42,7 +44,7 @@ class ArcVoltaic:
 
                 i_point = e_point
                 del e_point
-                
+
             del vector_intermediate
 
         points_for_draw = [self.__layout_coord_system.coord_system_to_coord_pygame(*self.__endpoint1.point)]
@@ -52,11 +54,4 @@ class ArcVoltaic:
         points_for_draw.append(self.__layout_coord_system.coord_system_to_coord_pygame(*self.__endpoint2.point))
 
         # draw the linea with points on surface screen
-        lines(self.__screen, self.__color, closed=False, points=points_for_draw, width=intensity)
-
-
-
-
-
-
-
+        lines(self.__screen, choice(self.__list_color), closed=False, points=points_for_draw, width=intensity)
