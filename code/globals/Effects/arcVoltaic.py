@@ -19,7 +19,7 @@ class ArcVoltaic:
         self.__turning_points = []
 
         # style
-        self.__list_color = ["light blue", "blue", "orange", "green"]
+        self.__list_color = ["dark blue", "blue", "light blue"]
 
         # layout coordinate system
         self.__layout_coord_system = CoordSys(self.__screen.get_width(), self.__screen.get_height())

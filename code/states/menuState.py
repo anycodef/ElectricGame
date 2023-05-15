@@ -5,8 +5,7 @@ from pygame import QUIT
 from code.widgets.buttons import ButtonManager
 from code.globals.generalState import BasicState
 
-from pygame.image import load as load_img
-from code.globals.constanst import path_root_project
+from code.globals.Effects.childOfArchVoltaic import CableWithArcVoltaicForMenu
 
 # test --------------------------------------
 from code.globals.Effects.arcVoltaic import ArcVoltaic
@@ -37,8 +36,7 @@ class MenuState(BasicState):
         self.managerButtons.init_buttons()
 
         # test --------------------------------------
-        self.arc1 = ArcVoltaic(self.screen)
-        self.coord = CoordSys(self.screen.get_width(), self.screen.get_height())
+        self.effect_arc_voltaic = CableWithArcVoltaicForMenu(screen)
         # test --------------------------------------
 
     def run(self) -> list:
@@ -50,16 +48,14 @@ class MenuState(BasicState):
             self.screen.fill(self.background_color)
 
             # show buttons
-            state_selected = self.managerButtons.run()
+            state_selected, two_points_beside_button = self.managerButtons.run()
             if state_selected:  # check whether a button is selected and therefore is returned a list
                 self.list_for_return = state_selected
                 self.exitState = True
 
             # test --------------------------------------
-            self.arc1.show(2, endpoint1=Point(x=-100, y=100), endpoint2=Point(*self.coord.coord_pygame_to_coord_system(*get_pos())), radio=randint(10, 40), intensity=randint(1, 3))
+            self.effect_arc_voltaic.run(two_points_beside_button)
             # test --------------------------------------
-
-            self.screen.blit(self.image_cable_left_bottom, (10, 10))
 
             # manage an event under the menu state
             for event in get_event():

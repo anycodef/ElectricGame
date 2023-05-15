@@ -24,11 +24,16 @@ class Button:
     def run(self):
         # initialize state returned
         self.state_for_return = None
+        two_points_beside_button_return = None
 
         # check if the mouse is in the button and if it's pressed
         if (self.posX <= get_pos()[0] <= self.posX + self.text_img.get_size()[0]) and \
                 (self.posY <= get_pos()[1] <= self.posY + self.text_img.get_size()[1]):
             self.color = self.color_text_selected
+
+            two_points_beside_button_return = [
+                [self.posX, self.posY + self.text_img.get_size()[1]/2],
+                [self.posX + self.text_img.get_size()[0], self.posY + self.text_img.get_size()[1]/2]]
 
             if get_pressed()[0]:
                 self.state_for_return = self.state
@@ -39,7 +44,7 @@ class Button:
         self.text_img = self.font.render(self.text, False, self.color)
         self.screen.blit(self.text_img, (self.posX, self.posY))
 
-        return self.state_for_return
+        return self.state_for_return, two_points_beside_button_return
 
 
 class ButtonManager:
@@ -74,10 +79,17 @@ class ButtonManager:
 
     def run(self):
         state_returned = None
+        two_point_return = None
 
         for button_obj in self.list_button_obj:
-            if button_obj.run():
+            state, two_points_beside_button = button_obj.run()
+
+            if two_points_beside_button:
+                if not two_point_return:
+                    two_point_return = two_points_beside_button
+
+            if state:
                 if not state_returned:
                     state_returned = button_obj.state
 
-        return state_returned
+        return state_returned, two_point_return
