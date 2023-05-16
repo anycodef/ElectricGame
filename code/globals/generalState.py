@@ -7,9 +7,7 @@ class BasicState:
         self.screen = screen
         self.background_color = "black"
 
-        self.exitState = False
-
-        self.list_for_return = [None, None]
+        self.class_for_return = None
 
         self.clock = Clock()
         self.FPS = 60

@@ -5,9 +5,11 @@ from pygame.mouse import get_pos, get_pressed
 class Button:
     def __init__(self, text: str, color_text, color_text_selected, size_text, screen, posy, state):
         self.text = text
+
         self.color = color_text
         self.color_text_unselected = color_text
         self.color_text_selected = color_text_selected
+
         self.size = size_text
 
         self.font = SysFont("Impact", self.size)
@@ -17,13 +19,12 @@ class Button:
         self.posY = posy
         self.posX = (self.screen.get_size()[0] - self.text_img.get_size()[0]) / 2
 
-        self.state_for_return = None
-        self.state = state
+        self.state = state  # This is a class
 
     # This function return a new state
     def run(self):
         # initialize state returned
-        self.state_for_return = None
+        state_class_for_return = None
         two_points_beside_button_return = None
 
         # check if the mouse is in the button and if it's pressed
@@ -36,7 +37,7 @@ class Button:
                 [self.posX + self.text_img.get_size()[0], self.posY + self.text_img.get_size()[1]/2]]
 
             if get_pressed()[0]:
-                self.state_for_return = self.state
+                state_class_for_return = self.state
         else:
             self.color = self.color_text_unselected
 
@@ -44,13 +45,13 @@ class Button:
         self.text_img = self.font.render(self.text, False, self.color)
         self.screen.blit(self.text_img, (self.posX, self.posY))
 
-        return self.state_for_return, two_points_beside_button_return
+        return state_class_for_return, two_points_beside_button_return
 
 
 class ButtonManager:
-    def __init__(self, list_text_button_and_state, color_text, color_text_selected, size_text, screen):
-        self.list_text_button_and_state = list_text_button_and_state
-        self.number_buttons = self.list_text_button_and_state.__len__()
+    def __init__(self, list_name_button_and_state, color_text, color_text_selected, size_text, screen):
+        self.list_name_button_and_state = list_name_button_and_state # This is a list [name, class_state]
+        self.number_buttons = self.list_name_button_and_state.__len__()
 
         # style
         self.padding_y = 10
@@ -70,10 +71,10 @@ class ButtonManager:
 
     def init_buttons(self):
         for i in range(self.number_buttons):
-            self.list_button_obj.append(Button(self.list_text_button_and_state[i][0],
+            self.list_button_obj.append(Button(self.list_name_button_and_state[i][0],
                                                self.color_text, self.color_text_selected,
                                                self.size_text, self.screen, self.pos_y,
-                                               self.list_text_button_and_state[i][1]))
+                                               self.list_name_button_and_state[i][1]))
 
             self.pos_y += self.size_text + self.padding_y
 

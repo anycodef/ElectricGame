@@ -1,3 +1,5 @@
+from math import sqrt, pow, fabs
+
 
 class Vect2d:
     def __init__(self, x=0, y=0):
@@ -60,5 +62,29 @@ class Vect2d:
         else:
             self.history_of_vector.append(self.vector)
             self.vector = new_vector
+
+    def module(self) -> float:
+        size_vector = sqrt(pow(self.vector[0], 2) + pow(self.vector[1], 2))
+        return size_vector
+
+    def vector_projection(self, base_vector, only_return=True):
+        module_base_vector = sqrt(pow(base_vector.vector[0], 2) + pow(base_vector.vector[1], 2))
+        do_product_between_two_vectors = self.dot_product(base_vector)
+        vector = [fabs(do_product_between_two_vectors/pow(module_base_vector, 2))
+                  * component for component in base_vector.vector]
+
+        if only_return:
+            return vector
+
+
+# unit_test
+"""if __name__ == '__main__':
+    vect1 = Vect2d(x=22, y=1)
+    vect2 = Vect2d(x=1, y=1)
+
+    vectPro12 = vect1.vector_projection(base_vector=vect2)
+    print(vectPro12)"""
+
+
 
 

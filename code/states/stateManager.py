@@ -3,13 +3,11 @@ from pygame.display import set_mode, set_caption
 from pygame import quit, init as init_pygame
 from sys import exit
 
-# states
+# states for default
 from .menuState import MenuState
-from .stateRule import StateRule
-from .Game.stateGameLevels import StateGameLevels
 
 # code for to standardized mode of return
-from code.globals.constanst import code_return
+from code.globals.constanst import EXIT_PROGRAM
 
 
 # This class is a main surface where put all graphics.
@@ -34,39 +32,23 @@ class StateManager:
         # initialize all modulo
         init_pygame()
 
-        # These are a states of game
-        self.__states = {
-            "MenuState": MenuState,
-            "GameState": StateGameLevels,
-            "RuleState": StateRule
-        }
-
-        self.__class_state = self.__states["MenuState"]  # save a class for instance.
-        self.__instance_new_state = True  # flag which indicate if action of instance will do
+        # to manage a classes state
+        self.__class_state = MenuState  # save a class for instance.
         self.__objet_state = None  # Save of obj of class.
-
-        self.__exitState = False
-        self.__list_mode_and_value_return_state = None  # This list returned a list with mode that is a
 
         self.__screen = Screen()  # object that content an obj windows
 
     def run(self):
-        while not self.__exitState:
+        # main loop
+        while self.__class_state != EXIT_PROGRAM:
 
             # Instance a class state
-            if self.__instance_new_state:
+            if self.__class_state and self.__class_state != EXIT_PROGRAM:
                 self.__objet_state = self.__class_state(self.__screen.obj)
-                self.__instance_new_state = False
+                self.__class_state = None
 
-            # Run state and way for list return. This list must have two elements
-            self.__list_mode_and_value_return_state = self.__objet_state.run()
-
-            # check the key and value returned
-            if code_return[self.__list_mode_and_value_return_state[0]] == 1:
-                self.__exitState = True
-            elif code_return[self.__list_mode_and_value_return_state[0]] == 2:
-                self.__instance_new_state = True
-                self.__class_state = self.__states[self.__list_mode_and_value_return_state[1]]
+            # Run state and wait for a new class state
+            self.__class_state = self.__objet_state.run()
 
         quit()
         exit()

@@ -1,20 +1,19 @@
+# import of the library pygame
 from pygame.display import flip
 from pygame.event import get as get_event
 from pygame import QUIT
 
+# buttons and basic class for state
 from code.widgets.buttons import ButtonManager
 from code.globals.generalState import BasicState
+from code.globals.constanst import EXIT_PROGRAM
 
+# class for the effects of arc voltaic and cables
 from code.globals.Effects.childOfArchVoltaic import CableWithArcVoltaicForMenu
 
-# test --------------------------------------
-from code.globals.Effects.arcVoltaic import ArcVoltaic
-from code.globals.Math.point import Point
-from code.globals.Math.coordinateSystem import CoordSys
-from random import randint
-from pygame.mouse import get_pos
-from pygame.transform import scale
-# test --------------------------------------
+# other states
+from code.states.stateRule import StateRule
+from code.states.Game.stateGameLevels import StateGameLevels
 
 
 # This state define an interface where
@@ -23,9 +22,9 @@ class MenuState(BasicState):
         BasicState.__init__(self, screen)
 
         # style general button
-        self.list_text_and_status = [["Play", ['executeState', "GameStateLevels"]],
-                                     ["Rules", ['executeState', "RuleState"]],
-                                     ["Exit", ['exitProgram', None]]]
+        self.list_text_and_status = [['Play', StateGameLevels],
+                                     ['Rules', StateRule],
+                                     ['Exit', EXIT_PROGRAM]]
 
         self.color_text = "white"
         self.color_selected = "blue"
@@ -35,35 +34,30 @@ class MenuState(BasicState):
         self.managerButtons = ButtonManager(self.list_text_and_status, self.color_text, self.color_selected, self.size_text, self.screen)
         self.managerButtons.init_buttons()
 
-        # test --------------------------------------
+        # arc voltaic object for do effect
         self.effect_arc_voltaic = CableWithArcVoltaicForMenu(screen)
-        # test --------------------------------------
 
-    def run(self) -> list:
+    def run(self):  # return a state class
 
         # main while of this state
-        while not self.exitState:
+        while not self.class_for_return:
 
             # Give a color to background of the menu in this case black
             self.screen.fill(self.background_color)
 
             # show buttons
-            state_selected, two_points_beside_button = self.managerButtons.run()
-            if state_selected:  # check whether a button is selected and therefore is returned a list
-                self.list_for_return = state_selected
-                self.exitState = True
+            self.class_for_return, two_points_beside_button = self.managerButtons.run()
 
-            # test --------------------------------------
+            # show a voltaic arc with your cables
             self.effect_arc_voltaic.run(two_points_beside_button)
-            # test --------------------------------------
 
             # manage an event under the menu state
             for event in get_event():
                 if event.type == QUIT:
-                    self.exitState = True
-                    self.list_for_return = ['exitProgram', None]
+                    self.class_for_return = EXIT_PROGRAM
 
+            # update screen
             flip()
             self.clock.tick(self.FPS)
 
-        return self.list_for_return
+        return self.class_for_return
