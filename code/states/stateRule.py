@@ -11,19 +11,20 @@ from code.globals.constanst import EXIT_PROGRAM, description_for_objects
 
 # test ------------------------------------------------------
 from code.globals.Math.physics.uniformMove import UniformMove
+
+
 # test ------------------------------------------------------
 
 
 class UnitCard:
-    def __init__(self, screen, x, y, width_card, height_card, content: dict, ):
-
+    def __init__(self, screen, x, y, width_card, content: dict, size_title,
+                 color_title, color_card_title, size_description, color_description, color_card_description):
         self.screen = screen
         # ------------------------------------- unit card ---------------------------------------
-        self.pos_x_unit_card, self.pos_y_unit_card = x, y   # only axes x will be no constant
+        self.pos_x_unit_card, self.pos_y_unit_card = x, y  # only axes x will be no constant
 
         self.color_fill_background = 'black'
         self.width_unit_card = width_card
-        self.height_unit_card = height_card
         self.radius = 5
         self.padding = 10
         self.proportion_width_of_image_part = .3
@@ -31,7 +32,8 @@ class UnitCard:
         # ------------------------------------- unit card ---------------------------------------
 
         # ------------------------------------- part content ---------------------------------------
-        self.pos_x_content_part, self.pos_y_content_part = self.pos_x_unit_card + self.padding, self.pos_y_unit_card + self.padding
+        self.pos_x_content_part, self.pos_y_content_part = self.pos_x_unit_card + self.padding, \
+                                                           self.pos_y_unit_card + self.padding
         self.width_content_part = self.width_unit_card - 3 * self.padding
         # ------------------------------------- unit card ---------------------------------------
 
@@ -43,30 +45,84 @@ class UnitCard:
         # ------------------------------------- title - description part ---------------------------------------
         self.pos_x_title_part = self.pos_x_img_part + self.width_img_part + self.padding
         self.pos_y_title_part = self.pos_y_content_part
-        self.pos_x_description_part = self.
-        self.width_title_and_description_part = {self.proportion_width_of_title_description_part * self.width_content_part
+        self.pos_x_description_part = self.pos_x_title_part
+        self.width_title_and_description_part = \
+            self.proportion_width_of_title_description_part * self.width_content_part
         # ------------------------------------- title - description part ---------------------------------------
 
+        # ------------------------------------- title - object ---------------------------------------------
+        self.card_title = CardText(screen, self.width_title_and_description_part,
+                                   [self.pos_x_title_part, self.pos_y_title_part],
+                                   color_card_title, content['name'], size_title, color_title)
+        self.height_title_card = self.card_title.height_card
+        self.pos_y_description_part = self.pos_y_title_part + self.height_title_card + self.padding
+        # ------------------------------------- title - object ---------------------------------------------
+        # ------------------------------------- description - object ---------------------------------------------
+        self.card_description = CardText(screen, self.width_title_and_description_part,
+                                         [self.pos_x_description_part, self.pos_y_description_part],
+                                         color_card_description, content['description'], size_description,
+                                         color_description)
+        self.height_description_card = self.card_description.height_card
+        self.height_img_part = self.height_title_card + self.padding + self.height_description_card
+        self.height_unit_card = self.height_img_part + 2 * self.padding
 
-        self.card_text_content = CardText(screen, self.width)
-
-    def run(self):
-
+    def show(self):
         # show a rect of background
-        rect(self.screen, self.color_fill_background, (self.pos_x, self.pos_y, self.width, self.height), self.radius)
+        rect(self.screen, self.color_fill_background,
+             (self.pos_x_unit_card, self.pos_y_unit_card, self.width_unit_card, self.height_unit_card), self.radius)
 
-        # show cardText
         # show cardTitle
+        self.card_title.show()
+        # show cardText
+        self.card_description.show()
         # show cardImg
 
 
 class PackageCardDescription:
-    def __init__(self, screen):
-
+    def __init__(self, screen, list_of_contents):
         self.margin = 10
-        self._pos_x, self.pos_y = self.margin, self.margin
-        self.color_fill = 'gray'
+        self.padding = 5
+        self.radius = 5
+        self.pos_x, self.pos_y = self.margin, self.margin
         self.width = screen.get_width() - 2 * self.margin
+        self.height = self.padding  # to accumulate, not is only this value
+        self.color_fill = 'gray'
+        self.list_unit_card = []
+        self.screen = screen
+
+        # ---------------- generate list of unit cards for show on the package -------------------------
+        x_unit_card = self.pos_x + self.padding
+        y_unit_card = self.pos_y + self.padding
+        width_unit_card = self.width - 2 * self.padding
+
+        # --------------- style for title - description ------------------------------------
+        size_title = 27
+        color_title = 'gray'
+        color_card_title = 'orange'
+
+        size_description = 20
+        color_description = 'black'
+        color_card_description = 'dark gray'
+
+        for dict_content in list_of_contents:
+            unit_card = UnitCard(self.screen, x_unit_card, y_unit_card, width_unit_card, dict_content,
+                                 size_title, color_title, color_card_title, size_description,
+                                 color_description, color_card_description)
+            self.list_unit_card.append(unit_card)
+            self.height += unit_card.height_unit_card + self.padding
+            y_unit_card += unit_card.height_unit_card + self.padding
+
+        # ---------------- generate list of unit cards for show on the package -------------------------
+
+    def show(self):
+        # show a rect package
+        rect(self.screen, self.color_fill, (self.pos_x, self.pos_y, self.width, self.height), border_radius=self.radius)
+
+        # show card units
+        for unit_card in self.list_unit_card:
+            # unit_card.calculate_pos()
+            if -unit_card.height_unit_card < unit_card.pos_y_unit_card < self.screen.get_width():
+                unit_card.show()
 
 
 class StateRule(BasicState):
@@ -74,26 +130,14 @@ class StateRule(BasicState):
         BasicState.__init__(self, screen)
         self.background_color = 'red'
 
-        # test --------------------------------------------
-        self.current_pos = [screen.get_width() + 10, 100]
-        self.pos_end = [10, 100]
-        self.moveMode = UniformMove(self.pos_end, self.current_pos, 1)
-        self.card1 = CardText(screen, 300, self.current_pos, 'white', "This is my fantastic creation until today.", 20, "black")
-        # test --------------------------------------------
+        self.package_view_description = PackageCardDescription(screen, description_for_objects)
 
     def run(self):
         while not self.class_for_return:
             # fill all windows with a color
             self.screen.fill(self.background_color)
 
-            # test --------------------------------------------
-            self.card1.show(new_pos=self.current_pos)
-            if self.current_pos != self.pos_end:
-                current_pos_aux = self.moveMode.run()
-                self.current_pos = current_pos_aux
-            elif self.moveMode:
-                self.moveMode = None
-            # test --------------------------------------------
+            self.package_view_description.show()
 
             # manager of events
             for event in get_queue_event():
@@ -104,4 +148,3 @@ class StateRule(BasicState):
             self.clock.tick(self.FPS)
 
         return self.class_for_return
-

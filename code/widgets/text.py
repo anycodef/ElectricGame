@@ -11,7 +11,8 @@ def text_to_words_img_list(text: str, t_color, b_color, s_text, n_font):
     return list_img_word_of_text
 
 
-def generate_list_pos_of_all_img_words_return_height_card(x_card, y_card, width_card, list_img_words, padding, space_between_lines_words, space_between_words):
+def generate_list_pos_of_all_img_words_return_height_card(x_card, y_card, width_card, list_img_words, padding,
+                                                          space_between_lines_words, space_between_words):
     list_list_img_pos = []
 
     x = x_card + padding
@@ -29,7 +30,7 @@ def generate_list_pos_of_all_img_words_return_height_card(x_card, y_card, width_
 
         list_list_img_pos.append([img_w, [x, y]])
 
-        x += img_w.get_width() + space_between_lines_words
+        x += img_w.get_width() + space_between_words
 
     height_card = y + height_word + padding
 
@@ -57,7 +58,11 @@ class CardText:
 
         # list words image for put in card
         self.list_img_word = text_to_words_img_list(text, t_color, b_color, s_text, n_font)
-        self.list_of_list_img_word_with_position, self.height_card = generate_list_pos_of_all_img_words_return_height_card(self.x_card_current, self.y_card_current, self.width_card, self.list_img_word, self.padding, self.space_between_lines_words, self.space_between_words)
+        self.list_of_list_img_word_with_position, self.height_card = \
+            generate_list_pos_of_all_img_words_return_height_card(self.x_card_current, self.y_card_current,
+                                                                  self.width_card, self.list_img_word, self.padding,
+                                                                  self.space_between_lines_words,
+                                                                  self.space_between_words)
 
     def show(self, new_pos=None):
 
@@ -70,7 +75,8 @@ class CardText:
                 self.x_card_current, self.y_card_current = new_pos
                 for index in range(self.list_of_list_img_word_with_position.__len__()):
                     pos_initial = self.list_of_list_img_word_with_position[index][1]
-                    self.list_of_list_img_word_with_position[index][1] = vect_direction.find_end_point(initial_point=pos_initial)
+                    self.list_of_list_img_word_with_position[index][1] = \
+                        vect_direction.find_end_point(initial_point=pos_initial)
 
         del vect_direction
 
