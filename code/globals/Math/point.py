@@ -1,5 +1,5 @@
 from random import uniform
-from turtle import onkey
+from math import sqrt, pow
 
 
 class Point:
@@ -33,6 +33,17 @@ class Point:
             is_equal_value = False
 
         return is_equal_value
+
+
+def distance_between_two_points(point1: list, point2: list):
+    distance = 0
+
+    for x1, x2 in list(zip(point1, point2)):
+        distance += pow(x1 - x2, 2)
+
+    distance = sqrt(distance)
+
+    return distance
 
 
 
