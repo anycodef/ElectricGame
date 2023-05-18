@@ -1,5 +1,8 @@
 from code.globals.generalState import BasicState
+
 from pygame.event import get as get_queue_event
+from pygame import KEYUP, KEYDOWN, K_UP, K_DOWN
+
 from pygame.draw import rect
 from pygame import QUIT
 from pygame.display import flip
@@ -17,12 +20,14 @@ from code.globals.Math.physics.uniformMove import UniformMove
 
 
 class UnitCard:
-    def __init__(self, screen, x, y, width_card, content: dict, size_title,
+    def __init__(self, screen, x_unit_card, y_unit_card, width_card, content: dict, size_title,
                  color_title, color_card_title, size_description, color_description, color_card_description):
         self.screen = screen
-        # ------------------------------------- unit card ---------------------------------------
-        self.pos_x_unit_card, self.pos_y_unit_card = x, y  # only axes x will be no constant
+        self.content = content
 
+        # ------------------------------------- unit card ---------------------------------------
+        self.pos_x_unit_card = x_unit_card
+        self.pos_y_unit_card = y_unit_card
         self.color_fill_background = 'black'
         self.width_unit_card = width_card
         self.radius = 5
@@ -32,8 +37,7 @@ class UnitCard:
         # ------------------------------------- unit card ---------------------------------------
 
         # ------------------------------------- part content ---------------------------------------
-        self.pos_x_content_part, self.pos_y_content_part = self.pos_x_unit_card + self.padding, \
-                                                           self.pos_y_unit_card + self.padding
+        self.pos_x_content_part, self.pos_y_content_part = self.pos_x_unit_card + self.padding, self.pos_y_unit_card + self.padding
         self.width_content_part = self.width_unit_card - 3 * self.padding
         # ------------------------------------- unit card ---------------------------------------
 
@@ -51,44 +55,60 @@ class UnitCard:
         # ------------------------------------- title - description part ---------------------------------------
 
         # ------------------------------------- title - object ---------------------------------------------
-        self.card_title = CardText(screen, self.width_title_and_description_part,
-                                   [self.pos_x_title_part, self.pos_y_title_part],
-                                   color_card_title, content['name'], size_title, color_title)
+        self.card_title = CardText(self.screen, self.pos_x_title_part, self.pos_y_title_part, self.width_title_and_description_part,
+                                   color_card_title, self.content['name'], size_title, color_title)
         self.height_title_card = self.card_title.height_card
         self.pos_y_description_part = self.pos_y_title_part + self.height_title_card + self.padding
+
+        self.size_title = size_title
+        self.color_title = color_title
+        self.color_card_title = color_card_title
         # ------------------------------------- title - object ---------------------------------------------
         # ------------------------------------- description - object ---------------------------------------------
-        self.card_description = CardText(screen, self.width_title_and_description_part,
-                                         [self.pos_x_description_part, self.pos_y_description_part],
-                                         color_card_description, content['description'], size_description,
-                                         color_description)
+        self.card_description = CardText(self.screen, self.pos_x_description_part, self.pos_y_description_part, self.width_title_and_description_part,
+                                         color_card_description, self.content['description'], size_description, color_description)
         self.height_description_card = self.card_description.height_card
         self.height_img_part = self.height_title_card + self.padding + self.height_description_card
         self.height_unit_card = self.height_img_part + 2 * self.padding
 
+    def set_pos(self, speed_y):
+        if speed_y:
+            self.pos_y_unit_card += speed_y
+
+            # set pos description
+            self.card_description.set_pos(speed_y)
+            # set pos title part
+            self.card_title.set_pos(speed_y)
+            # set pos image part
+
     def show(self):
         # show a rect of background
         rect(self.screen, self.color_fill_background,
-             (self.pos_x_unit_card, self.pos_y_unit_card, self.width_unit_card, self.height_unit_card), self.radius)
+             (self.pos_x_unit_card, self.pos_y_unit_card, self.width_unit_card, self.height_unit_card), border_radius=self.radius)
 
         # show cardTitle
-        self.card_title.show()
+        if -self.card_title.height_card < self.card_title.x_card < self.screen.get_height():
+            self.card_title.show()
         # show cardText
-        self.card_description.show()
+        if -self.card_description.height_card < self.card_description.x_card < self.screen.get_height():
+            self.card_description.show()
         # show cardImg
 
 
 class PackageCardDescription:
     def __init__(self, screen, list_of_contents):
+        self.screen = screen
+
         self.margin = 10
         self.padding = 5
         self.radius = 5
+
         self.pos_x, self.pos_y = self.margin, self.margin
-        self.width = screen.get_width() - 2 * self.margin
+        self.width = self.screen.get_width() - 2 * self.margin
         self.height = self.padding  # to accumulate, not is only this value
+
         self.color_fill = 'gray'
         self.list_unit_card = []
-        self.screen = screen
 
         # ---------------- generate list of unit cards for show on the package -------------------------
         x_unit_card = self.pos_x + self.padding
@@ -97,10 +117,10 @@ class PackageCardDescription:
 
         # --------------- style for title - description ------------------------------------
         size_title = 27
-        color_title = 'gray'
+        color_title = 'black'
         color_card_title = 'orange'
 
-        size_description = 20
+        size_description = 15
         color_description = 'black'
         color_card_description = 'dark gray'
 
@@ -114,13 +134,16 @@ class PackageCardDescription:
 
         # ---------------- generate list of unit cards for show on the package -------------------------
 
-    def show(self):
+    def show(self, component_speed_y=0):
         # show a rect package
+        if component_speed_y:
+            self.pos_y += component_speed_y
+
         rect(self.screen, self.color_fill, (self.pos_x, self.pos_y, self.width, self.height), border_radius=self.radius)
 
         # show card units
         for unit_card in self.list_unit_card:
-            # unit_card.calculate_pos()
+            unit_card.set_pos(component_speed_y)
             if -unit_card.height_unit_card < unit_card.pos_y_unit_card < self.screen.get_width():
                 unit_card.show()
 
@@ -128,21 +151,30 @@ class PackageCardDescription:
 class StateRule(BasicState):
     def __init__(self, screen):
         BasicState.__init__(self, screen)
-        self.background_color = 'red'
+        self.background_color = '#E8AA42'
 
         self.package_view_description = PackageCardDescription(screen, description_for_objects)
+
+        self.speed_y = 0
 
     def run(self):
         while not self.class_for_return:
             # fill all windows with a color
             self.screen.fill(self.background_color)
 
-            self.package_view_description.show()
+            self.package_view_description.show(self.speed_y)
 
             # manager of events
             for event in get_queue_event():
                 if event.type == QUIT:
                     self.class_for_return = EXIT_PROGRAM
+                if event.type == KEYDOWN:
+                    if event.key == K_UP:
+                        self.speed_y = -10
+                    if event.key == K_DOWN:
+                        self.speed_y = 10
+                if event.type == KEYUP:
+                    self.speed_y = 0
 
             flip()
             self.clock.tick(self.FPS)

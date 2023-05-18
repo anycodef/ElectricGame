@@ -14,5 +14,14 @@ description_for_objects = [
             'filename': f'{path_root_project}\\src\\liveSavers\\faraday_cage.png',
             'resize_to': (200, 200)
         }
+    },
+    {
+        'name': 'Jaula de Faraday',
+        'description': 'Es una estructura metálica diseñada para bloquear el campo electromagnético en su interior.',
+        'image': {
+            'filename': f'{path_root_project}\\src\\liveSavers\\faraday_cage.png',
+            'resize_to': (200, 200)
+        }
     }
+
 ]

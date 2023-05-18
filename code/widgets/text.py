@@ -22,7 +22,7 @@ def generate_list_pos_of_all_img_words_return_height_card(x_card, y_card, width_
 
     for img_w in list_img_words:
         if not height_word:
-            height_word = img_w.get_height()
+            height_word = img_w.get_rect().height
 
         if x + img_w.get_width() > x_card + width_card:
             x = x_card + padding
@@ -38,7 +38,7 @@ def generate_list_pos_of_all_img_words_return_height_card(x_card, y_card, width_
 
 
 class CardText:
-    def __init__(self, screen, width_card, pos_init, c_card, text: str, s_text, t_color, b_color=None, n_font='arial'):
+    def __init__(self, screen, x_card, y_card, width_card, c_card, text: str, s_text, t_color, b_color=None, n_font='arial'):
 
         # main surface
         self.screen = screen
@@ -53,39 +53,32 @@ class CardText:
         self.space_between_lines_words = 10
         self.space_between_words = 4
 
-        self.x_card_current = pos_init[0]
-        self.y_card_current = pos_init[1]
+        self.x_card = x_card
+        self.y_card = y_card
 
         # list words image for put in card
         self.list_img_word = text_to_words_img_list(text, t_color, b_color, s_text, n_font)
         self.list_of_list_img_word_with_position, self.height_card = \
-            generate_list_pos_of_all_img_words_return_height_card(self.x_card_current, self.y_card_current,
-                                                                  self.width_card, self.list_img_word, self.padding,
-                                                                  self.space_between_lines_words,
-                                                                  self.space_between_words)
+            generate_list_pos_of_all_img_words_return_height_card(self.x_card, self.y_card, self.width_card, self.list_img_word, self.padding,
+                                                                  self.space_between_lines_words, self.space_between_words)
 
-    def show(self, new_pos=None):
+    def set_pos(self, speed_y):
 
-        vect_direction = Vect2d(self.x_card_current, self.y_card_current)
+        if speed_y:
+            self.y_card += speed_y
 
-        if new_pos:
-            vect_direction.gen_vector(point1=[self.x_card_current, self.y_card_current], point2=new_pos)
+            for index in range(self.list_of_list_img_word_with_position.__len__()):
+                self.list_of_list_img_word_with_position[index][1][1] += speed_y
 
-            if vect_direction.module() != 0:
-                self.x_card_current, self.y_card_current = new_pos
-                for index in range(self.list_of_list_img_word_with_position.__len__()):
-                    pos_initial = self.list_of_list_img_word_with_position[index][1]
-                    self.list_of_list_img_word_with_position[index][1] = \
-                        vect_direction.find_end_point(initial_point=pos_initial)
-
-        del vect_direction
+    def show(self):
 
         # show card
-        rect(self.screen, self.color_card, (self.x_card_current, self.y_card_current, self.width_card, self.height_card), border_radius=self.radius)
+        rect(self.screen, self.color_card, (self.x_card, self.y_card, self.width_card, self.height_card), border_radius=self.radius)
 
         # show all words
         for img_w, pos in self.list_of_list_img_word_with_position:
-            self.screen.blit(img_w, pos)
+            if -img_w.get_height() < pos[0] < self.screen.get_height():
+                self.screen.blit(img_w, pos)
 
 
 
