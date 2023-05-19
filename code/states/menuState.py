@@ -26,12 +26,14 @@ class MenuState(BasicState):
                                      ['Rules', StateRule],
                                      ['Exit', EXIT_PROGRAM]]
 
+        self.log_class_status = []
+
         self.color_text = "white"
         self.color_selected = "blue"
         self.size_text = 30
 
         # buttons - manager
-        self.managerButtons = ButtonManager(self.list_text_and_status, self.color_text, self.color_selected, self.size_text, self.screen)
+        self.managerButtons = ButtonManager(self.list_text_and_status, self.color_text, self.color_selected, self.size_text, self.screen, self.screen.get_rect())
         self.managerButtons.init_buttons()
 
         # arc voltaic object for do effect

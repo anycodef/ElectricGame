@@ -8,6 +8,7 @@ from pygame import QUIT
 from pygame.display import flip
 
 from code.widgets.text import CardText
+from code.widgets.images import CardImg
 
 # constants
 from code.globals.constanst import EXIT_PROGRAM, description_for_objects
@@ -70,29 +71,31 @@ class UnitCard:
         self.height_description_card = self.card_description.height_card
         self.height_img_part = self.height_title_card + self.padding + self.height_description_card
         self.height_unit_card = self.height_img_part + 2 * self.padding
+        # ------------------------------------- description - object ---------------------------------------------
+        # ------------------------------------- card image - object ---------------------------------------------
+        self.card_img = CardImg(self.screen, self.pos_x_img_part, self.pos_y_img_part,
+                                content['image']['filename'], self.width_img_part, self.height_img_part)
+        # ------------------------------------- card image - object ---------------------------------------------
+        # ------------------------------------- list parts - object ---------------------------------------------
+        self.list_parts_of_unit_card = [self.card_img, self.card_title, self.card_description]
 
     def set_pos(self, speed_y):
         if speed_y:
             self.pos_y_unit_card += speed_y
 
-            # set pos description
-            self.card_description.set_pos(speed_y)
-            # set pos title part
-            self.card_title.set_pos(speed_y)
-            # set pos image part
+            for obj_part in self.list_parts_of_unit_card:
+                # set pos
+                obj_part.set_pos(speed_y)
 
     def show(self):
         # show a rect of background
         rect(self.screen, self.color_fill_background,
              (self.pos_x_unit_card, self.pos_y_unit_card, self.width_unit_card, self.height_unit_card), border_radius=self.radius)
 
-        # show cardTitle
-        if -self.card_title.height_card < self.card_title.x_card < self.screen.get_height():
-            self.card_title.show()
-        # show cardText
-        if -self.card_description.height_card < self.card_description.x_card < self.screen.get_height():
-            self.card_description.show()
-        # show cardImg
+        for obj_part in self.list_parts_of_unit_card:
+            # show part
+            if -obj_part.height_card < obj_part.y_card < self.screen.get_height():
+                obj_part.show()
 
 
 class PackageCardDescription:
@@ -137,6 +140,14 @@ class PackageCardDescription:
     def show(self, component_speed_y=0):
         # show a rect package
         if component_speed_y:
+            if self.pos_y + self.height <= self.screen.get_height() - self.margin and component_speed_y < 0:
+                component_speed_y = 0
+                self.pos_y = self.screen.get_height() - self.margin - self.height
+            elif self.pos_y >= self.margin and component_speed_y > 0:
+                component_speed_y = 0
+                self.pos_y = self.margin
+
+        if component_speed_y:
             self.pos_y += component_speed_y
 
         rect(self.screen, self.color_fill, (self.pos_x, self.pos_y, self.width, self.height), border_radius=self.radius)
@@ -170,9 +181,9 @@ class StateRule(BasicState):
                     self.class_for_return = EXIT_PROGRAM
                 if event.type == KEYDOWN:
                     if event.key == K_UP:
-                        self.speed_y = -10
+                        self.speed_y = 4
                     if event.key == K_DOWN:
-                        self.speed_y = 10
+                        self.speed_y = -4
                 if event.type == KEYUP:
                     self.speed_y = 0
 
