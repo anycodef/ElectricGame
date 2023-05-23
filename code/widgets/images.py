@@ -29,7 +29,7 @@ class CardImg:
             self.new_width_img = self.new_height_img * self.img_src.get_width() / self.img_src.get_height()
         else:
             self.new_width_img = self.width_card - 2 * self.padding
-            self.new_height_img = self.height_card * self.img_src.get_height() / self.img_src.get_width()
+            self.new_height_img = self.new_width_img * self.img_src.get_height() / self.img_src.get_width()
 
         self.img_src = scale(self.img_src, [self.new_width_img, self.new_height_img])
 

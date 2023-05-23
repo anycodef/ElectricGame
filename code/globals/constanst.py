@@ -35,6 +35,13 @@ description_for_objects = [
         'image': {
             'filename': f'{path_root_project}\\src\\liveSavers\\faraday_cage.png'
         }
+    },
+    {
+        'name': 'Jaula',
+        'description': 'en sus una estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear el campo electromagnético en sus una estructura metálica diseñada para bloquear el campo electromagnético en sus una estructura metálica diseñada para bloquear el campo electromagnético en sucampo electromagnético en sus una estructura metálica diseñada para bloquear el campo electromagnético en su.',
+        'image': {
+            'filename': f'{path_root_project}\\src\\liveSavers\\faraday_cage.png'
+        }
     }
 
 ]
