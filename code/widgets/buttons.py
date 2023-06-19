@@ -1,6 +1,8 @@
 from pygame.font import SysFont
 from pygame.mouse import get_pos, get_pressed
 
+from code.globals.allClassState import dict_name_status
+
 
 # ---------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------
@@ -105,15 +107,14 @@ class ButtonManager:
                 self.__number_buttons - 1) * self.__padding_y) / 2
 
     # Instance class Button and storage on the list button obj
-    def init_buttons(self, name_button_and_state):
-        self.__set_name_buttons(name_button_and_state)
+    def init_buttons(self, list_name_buttons):
+        self.__set_name_buttons(list_name_buttons)
         self.__list_button_obj.clear()
 
-        for i in range(self.__number_buttons):
-            self.__list_button_obj.append(Button(self.__list_name_button_and_state[i][0],
-                                                 self.__color_text, self.__color_text_selected,
+        for name_button in list_name_buttons:
+            self.__list_button_obj.append(Button(name_button, self.__color_text, self.__color_text_selected,
                                                  self.__size_text, self.__screen, self.__pos_y,
-                                                 self.__list_name_button_and_state[i][1], self.__rect_father))
+                                                 dict_name_status[name_button], self.__rect_father))
 
             self.__pos_y += self.__size_text + self.__padding_y
 

@@ -9,7 +9,7 @@ from ..Math.point import Point
 from pygame.mouse import get_pos
 from ..Math.coordinateSystem import CoordSys
 
-from os.path import normpath, join
+from os.path import join
 
 
 class CableWithArcVoltaicForMenu:

@@ -1,20 +1,20 @@
-from code.globals.generalState import BasicState
+from pygame.display import flip
+from pygame.event import get as get_event
+from pygame import QUIT
 
-from pygame.event import get as get_queue_event
+# buttons and basic class for state
+from code.globals.generalState import BasicState
+from code.globals.constanst import EXIT_PROGRAM
+
 from pygame import KEYUP, KEYDOWN, K_UP, K_DOWN
 
 from pygame.draw import rect
-from pygame import QUIT
-from pygame.display import flip
 
 from code.widgets.text import CardText
 from code.widgets.images import CardImg
 
 # constants
-from code.globals.constanst import EXIT_PROGRAM, description_for_objects
-
-# states for sidebar
-from code.states.Game.stateGameLevels import StateGameLevels
+from code.globals.constanst import description_for_objects
 
 
 class UnitCard:
@@ -164,12 +164,11 @@ class StateRule(BasicState):
     def __init__(self, screen, obj_exchanger_interface):
         BasicState.__init__(self, screen)
 
-        self.__list_text_and_status = [['Levels', StateGameLevels],
-                                       ['Exit', EXIT_PROGRAM]]
+        self.__list_names_buttons = ['Menu', 'Play', 'Exit']
 
         self.__obj_exchanger_interface = obj_exchanger_interface
-        self.__obj_exchanger_interface.set_gui_sidebar()
-        self.__obj_exchanger_interface.set_option_available_on_state(self.__list_text_and_status)
+        self.__obj_exchanger_interface.set_gui_side_bar()
+        self.__obj_exchanger_interface.set_option_available_on_state(self.__list_names_buttons)
 
         self.__background_color = '#E8AA42'
 
@@ -178,7 +177,7 @@ class StateRule(BasicState):
         self.__speed_y = 0
 
     def run(self):
-        while not self.list_class_obj_return:
+        while self.list_class_obj_return == [None, None]:
             # fill all windows with a color
             self.screen.fill(self.__background_color)
 
@@ -191,7 +190,7 @@ class StateRule(BasicState):
             self.list_class_obj_return = self.__obj_exchanger_interface.get_list_class_obj()
 
             # manager of events
-            for event in get_queue_event():
+            for event in get_event():
                 if event.type == QUIT:
                     self.list_class_obj_return = [EXIT_PROGRAM, None]
                 if event.type == KEYDOWN:

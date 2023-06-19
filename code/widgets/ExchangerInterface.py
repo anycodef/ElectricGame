@@ -5,6 +5,8 @@ from pygame.mouse import get_pos, get_pressed
 
 from code.widgets.buttons import ButtonManager
 
+from code.globals.Effects.childOfArchVoltaic import CableWithArcVoltaicForMenu
+
 
 def get_last_index(list_, value):
     index = None
@@ -38,7 +40,7 @@ class LauncherRect:
     def __init__(self, screen):
         self.__screen = screen
 
-        self.__color_on_top_of = 'light red'
+        self.__color_on_top_of = 'pink'
         self.__color_normal = 'red'
         self.__color_pressed = 'blue'
         self.__color = self.__color_normal
@@ -52,7 +54,7 @@ class LauncherRect:
         if self.is_active:
             self.is_active = False
 
-        if (self.__rect.x <= get_pos()[0] <= self.__rect.x + self.__rect.width) or \
+        if (self.__rect.x <= get_pos()[0] <= self.__rect.x + self.__rect.width) and \
                 (self.__rect.y <= get_pos()[1] <= self.__rect.y + self.__rect.height):
             self.__color = self.__color_on_top_of
 
@@ -80,10 +82,10 @@ class MenuGui:
         self.__rect_father = screen.get_rect()
 
         # rect default for sideBar
-        self.__rect = Rect(0, 0, 300, self.__rect_father.height)
+        self.__rect = Rect(0, 0, 200, self.__rect_father.height)
 
         # style
-        self.__background_color = 'light blue'
+        self.__background_color = 'black'
 
         # moving sideBar
         self.__speed_x = 10
@@ -97,14 +99,25 @@ class MenuGui:
         # manager buttons
         self.__manager_buttons = ButtonManager(screen, self.__rect)
 
+        # background effect
+        self.__cable_effect = CableWithArcVoltaicForMenu(self.__screen)
+
+    def __show_background_effect_cable(self):
+        two_points = self.__manager_buttons.get_extreme_button_selected()
+        if not two_points:
+            two_points = [get_pos(), get_pos()]
+
+        self.__cable_effect.run(two_points)
+
     def set_full_screen(self):
         self.__rect.width = self.__rect_father.width
 
     def set_gui_sidebar(self):
-        self.__rect.width = 300
+        self.__rect.width = 200
+        self.__rect.x = -self.__rect.width
 
-    def update_list_of_name_buttons(self, text_state):
-        self.__manager_buttons.init_buttons(text_state)
+    def update_list_of_name_buttons(self, list_names_buttons):
+        self.__manager_buttons.init_buttons(list_names_buttons)
 
     def __listen_move(self):  # ready
         # switch to convert of moving to no moving and vice verse
@@ -136,31 +149,43 @@ class MenuGui:
 
     def run(self):
         self.__show()
-        self.__listen_move()
-        self.__launcher.run()
         self.__manager_buttons.run()
+        if self.__rect.width != self.__screen.get_rect().width:
+            self.__listen_move()
+            self.__launcher.run()
+        else:
+            self.__show_background_effect_cable()
 
 
 class ExchangerInterface:
     def __init__(self, screen):
 
+        self.screen = screen
+
         # gui interface
-        self.__gui_interface = MenuGui(screen)
+        self.__gui_interface = None
 
         # manage queue event objet
         # self.__manager_log_status_class = ManagerLog()
 
+    def __init_gui_interface(self):
+        if self.__gui_interface:
+            del self.__gui_interface
+        self.__gui_interface = MenuGui(self.screen)
+
     def set_gui_full_screen(self):
+        self.__init_gui_interface()
         self.__gui_interface.set_full_screen()
 
-    def set_option_available_on_state(self, list_states_available):
-        self.__gui_interface.update_list_of_name_buttons(list_states_available)
+    def set_gui_side_bar(self):
+        self.__init_gui_interface()
+        self.__gui_interface.set_gui_sidebar()
+
+    def set_option_available_on_state(self, list_names_buttons):
+        self.__gui_interface.update_list_of_name_buttons(list_names_buttons)
 
     def get_list_class_obj(self):
-        if self.__gui_interface.get_status_select():
-            return None
-        else:
-            return [self.__gui_interface.get_status_select(), None]
+        return [self.__gui_interface.get_status_select(), None]
 
     def run(self):
         self.__gui_interface.run()
