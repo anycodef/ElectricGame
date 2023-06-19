@@ -13,11 +13,8 @@ from code.widgets.images import CardImg
 # constants
 from code.globals.constanst import EXIT_PROGRAM, description_for_objects
 
-# test ------------------------------------------------------
-from code.globals.Math.physics.uniformMove import UniformMove
-
-
-# test ------------------------------------------------------
+# states for sidebar
+from code.states.Game.stateGameLevels import StateGameLevels
 
 
 class UnitCard:
@@ -56,7 +53,8 @@ class UnitCard:
         # ------------------------------------- title - description part ---------------------------------------
 
         # ------------------------------------- title - object ---------------------------------------------
-        self.card_title = CardText(self.screen, self.pos_x_title_part, self.pos_y_title_part, self.width_title_and_description_part,
+        self.card_title = CardText(self.screen, self.pos_x_title_part, self.pos_y_title_part,
+                                   self.width_title_and_description_part,
                                    color_card_title, self.content['name'], size_title, color_title)
         self.height_title_card = self.card_title.height_card
         self.pos_y_description_part = self.pos_y_title_part + self.height_title_card + self.padding
@@ -66,8 +64,10 @@ class UnitCard:
         self.color_card_title = color_card_title
         # ------------------------------------- title - object ---------------------------------------------
         # ------------------------------------- description - object ---------------------------------------------
-        self.card_description = CardText(self.screen, self.pos_x_description_part, self.pos_y_description_part, self.width_title_and_description_part,
-                                         color_card_description, self.content['description'], size_description, color_description)
+        self.card_description = CardText(self.screen, self.pos_x_description_part, self.pos_y_description_part,
+                                         self.width_title_and_description_part,
+                                         color_card_description, self.content['description'], size_description,
+                                         color_description)
         self.height_description_card = self.card_description.height_card
         self.height_img_part = self.height_title_card + self.padding + self.height_description_card
         self.height_unit_card = self.height_img_part + 2 * self.padding
@@ -90,7 +90,8 @@ class UnitCard:
     def show(self):
         # show a rect of background
         rect(self.screen, self.color_fill_background,
-             (self.pos_x_unit_card, self.pos_y_unit_card, self.width_unit_card, self.height_unit_card), border_radius=self.radius)
+             (self.pos_x_unit_card, self.pos_y_unit_card, self.width_unit_card, self.height_unit_card),
+             border_radius=self.radius)
 
         for obj_part in self.list_parts_of_unit_card:
             # show part
@@ -160,34 +161,48 @@ class PackageCardDescription:
 
 
 class StateRule(BasicState):
-    def __init__(self, screen):
+    def __init__(self, screen, obj_exchanger_interface):
         BasicState.__init__(self, screen)
-        self.background_color = '#E8AA42'
 
-        self.package_view_description = PackageCardDescription(screen, description_for_objects)
+        self.__list_text_and_status = [['Levels', StateGameLevels],
+                                       ['Exit', EXIT_PROGRAM]]
 
-        self.speed_y = 0
+        self.__obj_exchanger_interface = obj_exchanger_interface
+        self.__obj_exchanger_interface.set_gui_sidebar()
+        self.__obj_exchanger_interface.set_option_available_on_state(self.__list_text_and_status)
+
+        self.__background_color = '#E8AA42'
+
+        self.__package_view_description = PackageCardDescription(screen, description_for_objects)
+
+        self.__speed_y = 0
 
     def run(self):
-        while not self.class_for_return:
+        while not self.list_class_obj_return:
             # fill all windows with a color
-            self.screen.fill(self.background_color)
+            self.screen.fill(self.__background_color)
 
-            self.package_view_description.show(self.speed_y)
+            # execute all cards of description
+            self.__package_view_description.show(self.__speed_y)
+
+            # execute sideBar
+            self.__obj_exchanger_interface.run()
+            # get list [class, obj] for return
+            self.list_class_obj_return = self.__obj_exchanger_interface.get_list_class_obj()
 
             # manager of events
             for event in get_queue_event():
                 if event.type == QUIT:
-                    self.class_for_return = EXIT_PROGRAM
+                    self.list_class_obj_return = [EXIT_PROGRAM, None]
                 if event.type == KEYDOWN:
                     if event.key == K_UP:
-                        self.speed_y = 4
+                        self.__speed_y = 4
                     if event.key == K_DOWN:
-                        self.speed_y = -4
+                        self.__speed_y = -4
                 if event.type == KEYUP:
-                    self.speed_y = 0
+                    self.__speed_y = 0
 
             flip()
             self.clock.tick(self.FPS)
 
-        return self.class_for_return
+        return self.list_class_obj_return

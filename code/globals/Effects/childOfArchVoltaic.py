@@ -9,6 +9,8 @@ from ..Math.point import Point
 from pygame.mouse import get_pos
 from ..Math.coordinateSystem import CoordSys
 
+from os.path import normpath, join
+
 
 class CableWithArcVoltaicForMenu:
     def __init__(self, screen):
@@ -17,10 +19,10 @@ class CableWithArcVoltaicForMenu:
         self.screen = screen
 
         # original image
-        self.image_cable_right_top = load_img(f'{path_root_project}\\src\\menuImg\\cable-right-top.png')
+        self.image_cable_right_top = load_img(join(path_root_project, 'src', 'menuImg', 'cable-right-top.png'))
         self.pos_relative_end_cable_right_top = [[140, 400], [66, 372], [4, 296]]
 
-        self.image_cable_left_bottom = load_img(f'{path_root_project}\\src\\menuImg\\cable-left-bottom.png')
+        self.image_cable_left_bottom = load_img(join(path_root_project, 'src', 'menuImg', 'cable-left-bottom.png'))
         self.pos_relative_end_cable_left_bottom = [[218, 3], [294, 23], [353, 108]]
 
         self.size_image = self.image_cable_left_bottom.get_size()

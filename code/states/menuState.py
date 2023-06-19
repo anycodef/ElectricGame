@@ -4,7 +4,6 @@ from pygame.event import get as get_event
 from pygame import QUIT
 
 # buttons and basic class for state
-from code.widgets.buttons import ButtonManager
 from code.globals.generalState import BasicState
 from code.globals.constanst import EXIT_PROGRAM
 
@@ -18,23 +17,17 @@ from code.states.Game.stateGameLevels import StateGameLevels
 
 # This state define an interface where
 class MenuState(BasicState):
-    def __init__(self, screen):
+    def __init__(self, screen, obj_exchanger_interface):
         BasicState.__init__(self, screen)
 
         # style general button
-        self.list_text_and_status = [['Play', StateGameLevels],
-                                     ['Rules', StateRule],
-                                     ['Exit', EXIT_PROGRAM]]
+        self.__list_text_and_status = [['Play', StateGameLevels],
+                                       ['Rules', StateRule],
+                                       ['Exit', EXIT_PROGRAM]]
 
-        self.log_class_status = []
-
-        self.color_text = "white"
-        self.color_selected = "blue"
-        self.size_text = 30
-
-        # buttons - manager
-        self.managerButtons = ButtonManager(self.list_text_and_status, self.color_text, self.color_selected, self.size_text, self.screen, self.screen.get_rect())
-        self.managerButtons.init_buttons()
+        self.__obj_exchanger_interface = obj_exchanger_interface
+        self.__obj_exchanger_interface.set_gui_full_screen()
+        self.__obj_exchanger_interface.set_option_available_on_state(self.__list_text_and_status)
 
         # arc voltaic object for do effect
         self.effect_arc_voltaic = CableWithArcVoltaicForMenu(screen)
@@ -42,24 +35,23 @@ class MenuState(BasicState):
     def run(self):  # return a state class
 
         # main while of this state
-        while not self.class_for_return:
+        while not self.list_class_obj_return:
 
             # Give a color to background of the menu in this case black
             self.screen.fill(self.background_color)
 
-            # show buttons
-            self.class_for_return, two_points_beside_button = self.managerButtons.run()
-
-            # show a voltaic arc with your cables
-            self.effect_arc_voltaic.run(two_points_beside_button)
+            # execute menu buttons
+            self.__obj_exchanger_interface.run()
+            # get list [class, obj] for return
+            self.list_class_obj_return = self.__obj_exchanger_interface.get_list_class_obj()
 
             # manage an event under the menu state
             for event in get_event():
                 if event.type == QUIT:
-                    self.class_for_return = EXIT_PROGRAM
+                    self.list_class_obj_return = [EXIT_PROGRAM, None]
 
             # update screen
             flip()
             self.clock.tick(self.FPS)
 
-        return self.class_for_return
+        return self.list_class_obj_return

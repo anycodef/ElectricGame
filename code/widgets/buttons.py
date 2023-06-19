@@ -2,104 +2,145 @@ from pygame.font import SysFont
 from pygame.mouse import get_pos, get_pressed
 
 
+# ---------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------
 class Button:
     def __init__(self, text: str, color_text, color_text_selected, size_text, screen, posy, state, rect_father):
-        self.text = text
+        # text that show under button
+        self.__screen = screen
+        self.__text = text
 
-        self.color = color_text
-        self.color_text_unselected = color_text
-        self.color_text_selected = color_text_selected
+        # color for three cases
+        self.__color = color_text
+        self.__color_text_unselected = color_text
+        self.__color_text_selected = color_text_selected
 
-        self.size = size_text
+        self.__size = size_text
 
-        self.font = SysFont("Impact", self.size)
-        self.text_img = self.font.render(self.text, False, self.color)
-        self.rect = self.text_img.get_rect()
+        self.__font = SysFont("Impact", self.__size)
+        self.__text_img = self.__font.render(self.__text, False, self.__color)
+        self.__rect = self.__text_img.get_rect()
 
-        self.screen = screen
-
-        self.rect.y = posy
-        self.rect.x = rect_father.x + (rect_father.width - self.text_img.get_width()) / 2
+        self.__rect.y = posy
+        self.__rect.x = rect_father.x + (rect_father.width - self.__text_img.get_width()) / 2
 
         self.state = state  # This is a class
+        self.extreme_position = [[self.__rect.x, self.__rect.y + self.__rect.height / 2],
+                                 [self.__rect.x + self.__rect.width, self.__rect.y + self.__rect.height / 2]]
+
+        # active
+        self.pressed = False
+        self.on_top_of = False
 
     # This function return a new state
-    def run(self):
-        # initialize state returned
-        state_class_for_return = None
-        two_points_beside_button_return = None
+    def get_extreme_position(self):
+        if self.on_top_of:
+            return self.extreme_position
+        else:
+            return None
+
+    def move_horizontal(self, speed):
+        self.__rect.x += speed
+
+    def get_status(self):
+        if self.pressed:
+            return self.state
+        else:
+            return None
+
+    def __listen_the_mouse(self):
 
         # check if the mouse is in the button and if it's pressed
-        if (self.rect.x <= get_pos()[0] <= self.rect.x + self.rect.width) and \
-                (self.rect.y <= get_pos()[1] <= self.rect.y + self.rect.height):
-            self.color = self.color_text_selected
 
-            two_points_beside_button_return = [
-                [self.rect.x, self.rect.y + self.rect.height/2],
-                [self.rect.x + self.rect.width, self.rect.y + self.rect.height/2]]
+        self.on_top_of = (self.__rect.x <= get_pos()[0] <= self.__rect.x + self.__rect.width) and \
+                         (self.__rect.y <= get_pos()[1] <= self.__rect.y + self.__rect.height)
 
-            if get_pressed()[0]:
-                state_class_for_return = self.state
+        if self.on_top_of:
+            self.__color = self.__color_text_selected
+            self.pressed = get_pressed()[0]
+
         else:
-            self.color = self.color_text_unselected
+            self.__color = self.__color_text_unselected
 
+    def __show(self):
         # show button in the screen
-        self.text_img = self.font.render(self.text, False, self.color)
-        self.screen.blit(self.text_img, (self.rect.x, self.rect.y))
-
-        return state_class_for_return, two_points_beside_button_return
-
-
-class ButtonManager:
-    def __init__(self, list_name_button_and_state, color_text, color_text_selected, size_text, screen, rect_father):
-        self.list_name_button_and_state = list_name_button_and_state  # This is a list [name, class_state]
-        self.number_buttons = self.list_name_button_and_state.__len__()
-
-        # style
-        self.padding_y = 10
-        self.size_text = size_text
-        self.color_text = color_text
-        self.color_text_selected = color_text_selected
-
-        # main surface
-        self.screen = screen
-        self.rect_father = rect_father
-
-        # position
-        self.pos_y = rect_father.y + (rect_father.height - self.number_buttons * self.size_text - (
-                    self.number_buttons - 1) * self.padding_y) / 2
-
-        # list buttons for managed
-        self.list_button_obj = []
-
-    def init_buttons(self):
-        for i in range(self.number_buttons):
-            self.list_button_obj.append(Button(self.list_name_button_and_state[i][0],
-                                               self.color_text, self.color_text_selected,
-                                               self.size_text, self.screen, self.pos_y,
-                                               self.list_name_button_and_state[i][1], self.rect_father))
-
-            self.pos_y += self.size_text + self.padding_y
-
-    def set_pos_side_bar(self, speed_x=0):
-        if speed_x:
-            self.list_button_obj
-
-            # here implement a code for do effects move on the any status that implement a bar side
+        self.__text_img = self.__font.render(self.__text, False, self.__color)
+        self.__screen.blit(self.__text_img, (self.__rect.x, self.__rect.y))
 
     def run(self):
-        state_returned = None
-        two_point_return = None
+        self.__listen_the_mouse()
+        self.__show()
 
-        for button_obj in self.list_button_obj:
-            state, two_points_beside_button = button_obj.run()
 
-            if two_points_beside_button:
-                if not two_point_return:
-                    two_point_return = two_points_beside_button
+# ---------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------
+class ButtonManager:
+    def __init__(self, screen, rect_father):
+        self.__list_name_button_and_state = None  # This is a list [name, class_state]
+        self.__number_buttons = None
 
-            if state:
-                if not state_returned:
-                    state_returned = button_obj.state
+        # style
+        self.__padding_y = 10
+        self.__size_text = 27
+        self.__color_text = 'white'
+        self.__color_text_selected = 'red'
 
-        return state_returned, two_point_return
+        # main surface
+        self.__screen = screen
+        self.__rect_father = rect_father
+
+        # position
+        self.__pos_y = None
+
+        # list buttons for managed
+        self.__list_button_obj = []
+
+    def __set_name_buttons(self, name_button_and_state):
+        self.__list_name_button_and_state = name_button_and_state
+        self.__number_buttons = self.__list_name_button_and_state.__len__()
+
+        self.__pos_y = self.__rect_father.y + (self.__rect_father.height - self.__number_buttons * self.__size_text - (
+                self.__number_buttons - 1) * self.__padding_y) / 2
+
+    # Instance class Button and storage on the list button obj
+    def init_buttons(self, name_button_and_state):
+        self.__set_name_buttons(name_button_and_state)
+        self.__list_button_obj.clear()
+
+        for i in range(self.__number_buttons):
+            self.__list_button_obj.append(Button(self.__list_name_button_and_state[i][0],
+                                                 self.__color_text, self.__color_text_selected,
+                                                 self.__size_text, self.__screen, self.__pos_y,
+                                                 self.__list_name_button_and_state[i][1], self.__rect_father))
+
+            self.__pos_y += self.__size_text + self.__padding_y
+
+    def move_horizontal(self, speed_x=0):
+        for button in self.__list_button_obj:
+            button.move_horizontal(speed_x)
+
+    def get_extreme_button_selected(self):
+        position_extreme_button = None
+        i = 0
+
+        while position_extreme_button is None and i != self.__list_button_obj.__len__():
+            position_extreme_button = self.__list_button_obj[i].get_extreme_position()
+            i += 1
+
+        return position_extreme_button
+
+    def get_status_selected(self):
+        status_selected = None
+        i = 0
+
+        while status_selected is None and i != self.__list_button_obj.__len__():
+            status_selected = self.__list_button_obj[i].get_status()
+            i += 1
+
+        return status_selected
+
+    def run(self):
+        for button in self.__list_button_obj:
+            button.run()

@@ -1,8 +1,6 @@
 from pygame.font import SysFont
 from pygame.draw import rect
 
-from code.globals.Math.vect2d import Vect2d
-
 
 def text_to_words_img_list(text: str, t_color, b_color, s_text, n_font):
     content = text
