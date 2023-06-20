@@ -6,6 +6,10 @@ from pygame import QUIT
 from code.globals.constanst import EXIT_PROGRAM
 
 
+class Levels:
+    pass
+
+
 class StateGameLevels(BasicState):
     def __init__(self, screen, obj_exchanger_interface):
         BasicState.__init__(self, screen)
