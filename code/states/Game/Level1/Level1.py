@@ -19,7 +19,7 @@ class StateLevel1(BasicStateLevel):
             self.list_class_obj_return = self.get_list_class_obj_return_and_exe_exchanger_interface()
 
             flip()
-            self.clock.tick(self.FPS)
+            self.clock.tick(1)
 
         return self.list_class_obj_return
 
