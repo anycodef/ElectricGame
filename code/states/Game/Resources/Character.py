@@ -219,7 +219,6 @@ class CharacterUser(Character):
 
         for event in queue_event:
             if event.type == KEYDOWN:
-
                 if event.key == K_UP:
                     if 'jump' not in self.states:
                         self.states = ['jump'] + self.states
@@ -245,7 +244,6 @@ class CharacterUser(Character):
                     self.current_direction = 'right'
 
             if event.type == KEYUP:
-
                 if event.key == K_DOWN:
                     if 'stop' in self.states:
                         self.states.remove('stop')
