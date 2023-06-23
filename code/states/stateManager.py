@@ -12,16 +12,15 @@ from code.widgets.ExchangerInterface import ExchangerInterface
 # code for to standardized mode of return
 from code.globals.constanst import EXIT_PROGRAM
 
+# flag to modify the dimension of the screen to full-screen
+from pygame import FULLSCREEN
+
 
 # This class is a main surface where put all graphics.
 class Screen:
     def __init__(self):
-        # These are dimensions for screen
-        self.__width = 900
-        self.__height = 600
-
         # This object is the windows
-        self.obj = set_mode((self.__width, self.__height))
+        self.obj = set_mode(flags=FULLSCREEN)
         set_caption("ElectricGame")  # Title of windows
 
 

@@ -16,6 +16,8 @@ class BasicStateLevel(BasicState):
 
         self.background_color = 'dark gray'
 
+        self.FPS = 120
+
     def get_list_class_obj_return_and_exe_exchanger_interface(self):
         self.__obj_exchanger_interface.run()
         return self.__obj_exchanger_interface.get_list_class_obj()

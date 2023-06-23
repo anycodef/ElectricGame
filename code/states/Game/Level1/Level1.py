@@ -7,7 +7,7 @@ from pygame.display import flip
 class StateLevel1(BasicStateLevel):
     def __init__(self, screen, obj_exchanger_interface):
         BasicStateLevel.__init__(self, screen, obj_exchanger_interface)
-        self.character1 = CharacterUser(screen)
+        self.character1 = CharacterUser(screen, self.clock.get_fps)
 
     def run(self):
         while self.list_class_obj_return == [None, None]:
@@ -19,7 +19,7 @@ class StateLevel1(BasicStateLevel):
             self.list_class_obj_return = self.get_list_class_obj_return_and_exe_exchanger_interface()
 
             flip()
-            self.clock.tick(1)
+            self.clock.tick(self.FPS)
 
         return self.list_class_obj_return
 

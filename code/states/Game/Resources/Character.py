@@ -1,7 +1,10 @@
 from pygame.image import load
 from code.globals.constanst import path_root_project, join
 
-from pygame import KEYUP, KEYDOWN, K_UP, K_DOWN, K_LEFT, K_RIGHT
+from pygame import KEYUP, KEYDOWN, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_SPACE
+
+# accessories
+from code.states.Game.Resources.weapon import Weapon
 
 
 # class for load all frames of the main character
@@ -12,8 +15,8 @@ class LoaderImgCharacter:
                                          {'action': 'run', 'nFrames': 12},
                                          {'action': 'jump', 'nFrames': 6},
                                          {'action': 'stop', 'nFrames': 1},
-                                         {'action': 'toBendDown', 'nFrames': 5},
-                                         {'action': 'toBendUp', 'nFrames': 5}]
+                                         {'action': 'toBendDown', 'nFrames': 2},
+                                         {'action': 'toBendUp', 'nFrames': 2}]
 
         # directions. As this is a game in 2d then the possibilities is a right and left
         self.__direction = ['right', 'left']
@@ -45,9 +48,15 @@ class LoaderImgCharacter:
 # The method of this class haven't a while structure and depend on the parent class while's.
 class CharacterMechanisms:
     def __init__(self):
+
         self.__x, self.__y = [10, 100]  # This is a position of the sprites
         self.__speed = [0, 0]  # speed for moving
         self.__RUN_SPEED_X = 50  # This is a constant that indicate a component x of the speed vector
+
+        # for jump
+        self.__JUMP_SPEED_Y = 60
+        self.__time = 0
+        self.__add_jump = self.__JUMP_SPEED_Y / 3
 
         self.__actions = {
             'run': self.__set_run,
@@ -55,7 +64,7 @@ class CharacterMechanisms:
             'jump': self.__set_jump,
             'stop': self.__set_stop,
             'toBendDown': self.__set_toBendDown,
-            'toBendUp': self.__set_toBendUp
+            'toBendUp': self.__set_toBendUp,
         }
 
     def get_pos(self):
@@ -69,16 +78,22 @@ class CharacterMechanisms:
         self.__speed[0] = self.__RUN_SPEED_X
 
     def __set_jump(self):
-        pass
+        # v = v_i + gT
+        self.__time += 1
+        self.__speed[1] = self.__add_jump * self.__time - self.__JUMP_SPEED_Y
+
+        if self.__time == 6:
+            self.__speed[1] = 0
+            self.__time = 0
 
     def __set_stop(self):
         self.__speed[0] = 0
 
     def __set_toBendDown(self):
-        pass
+        self.__set_stop()
 
     def __set_toBendUp(self):
-        pass
+        self.__set_stop()
 
     def __update_direction(self, direction):
         if direction == 'left':
@@ -89,10 +104,13 @@ class CharacterMechanisms:
                 self.__RUN_SPEED_X *= -1
 
     # This method is on the class parent while's.
-    def run(self, current_state, current_direction):
-        self.__update_direction(current_direction)
-        self.__actions[current_state]()  # execute the correct method for the given state
-        self.__update_position()
+    def run(self, state, current_direction, update):
+
+        # manage states: The structure of state is as this: [[act1, act2, ..., actn], ..., [act1, act2, ..., actn]]
+        if update:
+            self.__update_direction(current_direction)
+            self.__actions[state[0]]()  # execute the correct method for the given state
+            self.__update_position()
 
 
 class ManageSpriteCharacter:
@@ -148,14 +166,19 @@ class ManageSpriteCharacter:
     def __show(self, current_pos):
         self.__screen.blit(self.__current_img, current_pos)
 
-    def run(self, states, current_direction, current_pos):
-        self.__actions[states[0]](states, current_direction)
+    def run(self, states, current_direction, current_pos, update):
+        if update:
+            self.__actions[states[0]](states, current_direction)
+
         self.__show(current_pos)
 
 
 class Character:
-    def __init__(self, screen):
+    def __init__(self, screen, get_current_fps):
         self.__current_pos = None
+
+        # accessories
+        self.accessories = [Weapon(screen)]
 
         self.states = ['stop']
         self.current_direction = 'right'
@@ -163,47 +186,79 @@ class Character:
         self.__mechanisms = CharacterMechanisms()
         self.__manager_sprite = ManageSpriteCharacter(screen)
 
-    def exe(self):
-        self.__mechanisms.run(self.states[0], self.current_direction)
-        self.__current_pos = self.__mechanisms.get_pos()
+        # manage fps character
+        self.__FPS = 15
+        self.__update = False
+        self.__get_current_fps = get_current_fps
+        self.__counter_space_time = self.__get_current_fps() + self.__FPS
 
-        self.__manager_sprite.run(self.states, self.current_direction, self.__current_pos)
+    def exe(self):
+        if self.__counter_space_time > self.__get_current_fps() / self.__FPS:
+            self.__update = True
+            self.__counter_space_time = 0
+        else:
+            self.__update = False
+            self.__counter_space_time += 1
+
+        self.__mechanisms.run(self.states, self.current_direction, self.__update)
+        self.__current_pos = self.__mechanisms.get_pos()
+        self.__manager_sprite.run(self.states, self.current_direction, self.__current_pos, self.__update)
+
+        for _ in self.accessories:
+            _.run(*self.__current_pos, self.current_direction, self.states)
 
 
 class CharacterUser(Character):
-    def __init__(self, screen):
-        Character.__init__(self, screen)
+    def __init__(self, screen, get_current_fps):
+        Character.__init__(self, screen, get_current_fps)
         self.__speed_x = 10
 
     def __manage_event(self, queue_event):
+        for _ in self.accessories:
+            _.manage_events(queue_event)
+
         for event in queue_event:
             if event.type == KEYDOWN:
+
                 if event.key == K_UP:
-                    self.states = ['jump'] + self.states
+                    if 'jump' not in self.states:
+                        self.states = ['jump'] + self.states
 
                 if event.key == K_DOWN:
-                    print(self.states)
-                    self.states.remove('stop')
-                    self.states.append('toBendUp')
+                    if 'stop' in self.states:
+                        self.states.remove('stop')
+                    if 'toBendDown' not in self.states:
+                        self.states.append('toBendDown')
 
                 if event.key == K_LEFT:
-                    self.states.remove('stop')
-                    self.states.append('run')
+                    if 'stop' in self.states:
+                        self.states.remove('stop')
+                    if 'run' not in self.states:
+                        self.states.append('run')
                     self.current_direction = 'left'
 
                 if event.key == K_RIGHT:
-                    self.states.remove('stop')
-                    self.states.append('run')
+                    if 'stop' in self.states:
+                        self.states.remove('stop')
+                    if 'run' not in self.states:
+                        self.states.append('run')
                     self.current_direction = 'right'
 
             if event.type == KEYUP:
+
                 if event.key == K_DOWN:
-                    self.states.append('toBendUp')
-                    self.states.append('stop')
+                    if 'stop' in self.states:
+                        self.states.remove('stop')
+                    if 'toBendUp' not in self.states:
+                        self.states.append('toBendUp')
+                    if 'stop' not in self.states:
+                        self.states.append('stop')
 
                 if event.key in [K_LEFT, K_RIGHT]:
-                    self.states.append('stop')
-                    self.states.remove('run')
+                    if 'stop' not in self.states:
+                        self.states.append('stop')
+                    if 'run' in self.states:
+                        self.states.remove('run')
 
     def execution(self, queue_event):
         self.__manage_event(queue_event)
@@ -211,7 +266,5 @@ class CharacterUser(Character):
 
 
 class CharacterAuto(Character):
-    def __init__(self, screen):
-        Character.__init__(self, screen)
-
-
+    def __init__(self, screen, get_current_fps):
+        Character.__init__(self, screen, get_current_fps)
