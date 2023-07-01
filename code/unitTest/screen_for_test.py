@@ -5,7 +5,7 @@ from sys import exit
 
 from pygame.time import Clock
 
-from code.states.Game.Resources.Battery import Battery
+from code.states.Game.Level1.Resources import Battery
 
 init()
 screen = set_mode([800, 800])
