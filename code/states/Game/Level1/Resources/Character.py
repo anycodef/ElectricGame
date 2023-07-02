@@ -5,6 +5,7 @@ from pygame import KEYDOWN, K_UP
 
 # accessories
 from code.states.Game.Level1.Resources.weapon import Weapon
+from pygame.rect import Rect
 
 
 # class for load all frames of the main character
@@ -40,7 +41,9 @@ class LoaderImgCharacter:
 
 class AbstractGeneralCharacter:
     x, y = 0, 0
+    width, height = 0, 0
     update = False
+    rect_character = Rect(x, y, width, height)
 
 
 # This class is a controller of the position of sprites. This class modify the current position of character
@@ -139,6 +142,10 @@ class ManageSpriteCharacter(AbstractGeneralCharacter):
         self.__current_img = self.__loader_img.figure_image[states[0]][current_direction][self.__index_img]
 
     def __show(self):
+        AbstractGeneralCharacter.width = self.__current_img.get_width()
+        AbstractGeneralCharacter.height = self.__current_img.get_height()
+        AbstractGeneralCharacter.rect_img = self.__current_img.get_rect()
+
         self.__screen.blit(self.__current_img, (AbstractGeneralCharacter.x, AbstractGeneralCharacter.y))
 
     def run(self, states, current_direction):

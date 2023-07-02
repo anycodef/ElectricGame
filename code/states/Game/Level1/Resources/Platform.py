@@ -5,6 +5,7 @@ from pygame.image import load
 def load_images_get_position(width_parent, height_parent):
     x = -300
     y = height_parent - 320
+    AbstractClassPlatform.y = height_parent - 320
 
     img = load(join(path_root_project, 'src', 'platform', 'typePlatform1.png'))
     list_img = []
@@ -20,7 +21,9 @@ def load_images_get_position(width_parent, height_parent):
 
 
 class AbstractClassPlatform:
+    y = 0
     position_blocks = []
+    speed = -10
 
     def __init__(self):
         self.width_block = 331
@@ -29,7 +32,6 @@ class AbstractClassPlatform:
 class MechanicsPlatform(AbstractClassPlatform):
     def __init__(self):
         AbstractClassPlatform.__init__(self)
-        self.__speed = -10
 
     def __check_position(self):
         first_block_position = AbstractClassPlatform.position_blocks[0]
@@ -41,7 +43,7 @@ class MechanicsPlatform(AbstractClassPlatform):
 
     def move(self):
         for index in range(AbstractClassPlatform.position_blocks.__len__()):
-            AbstractClassPlatform.position_blocks[index][0] += self.__speed
+            AbstractClassPlatform.position_blocks[index][0] += AbstractClassPlatform.speed
         self.__check_position()
 
 
