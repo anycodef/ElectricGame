@@ -9,14 +9,18 @@ class AbstractBattery:
 
 class ModifierPercentageCharge:
     @staticmethod
-    def increase_level_battery():
+    def increase_level_battery(step=5):
         if AbstractBattery.level_of_battery < 100:
-            AbstractBattery.level_of_battery += 5
+            AbstractBattery.level_of_battery += step
+        else:
+            AbstractBattery.level_of_battery = 100
 
     @staticmethod
-    def decrease_level_battery():
+    def decrease_level_battery(step=-5):
         if AbstractBattery.level_of_battery > 0:
-            AbstractBattery.level_of_battery -= 5
+            AbstractBattery.level_of_battery += step
+        else:
+            AbstractBattery.level_of_battery = 0
 
 
 class BatteryGui:
@@ -27,17 +31,18 @@ class Gui(BatteryGui):
     def __init__(self, screen):
         self.__screen = screen
 
-        self.__n_sprites = 7
+        self.__n_sprites = 8
         self.__sprite = [load(join(path_root_project, 'src', 'batteryStatus',
                                    f'battery{i}.png')) for i in range(self.__n_sprites)]
 
-        self.__range_img = 100 / self.__n_sprites
+        self.__range_img = 100 / (self.__n_sprites - 1)
 
         BatteryGui.rect.width = self.__sprite[0].get_width()
         BatteryGui.rect.height = self.__sprite[0].get_height()
 
     def show(self):
-        self.__screen.blit(self.__sprite[int(AbstractBattery.level_of_battery / self.__range_img) - 1],
+
+        self.__screen.blit(self.__sprite[int(AbstractBattery.level_of_battery / self.__range_img)],
                            (BatteryGui.rect.x, BatteryGui.rect.y))
 
 

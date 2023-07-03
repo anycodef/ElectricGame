@@ -12,29 +12,34 @@ class AbstractMechanics:
         self.__screen_width = screen_width
 
         self.__collision = False
+        self.re_position = False
 
     def is_collision(self):
         return self.__collision
 
+    def end_collision(self):
+        self.__collision = False
+
     def __move(self):
-        if self.__rect.x + self.__rect.width > 0 and not self.__collision:
+        if self.__rect.x + self.__rect.width > 0 and not self.re_position:
             self.__rect.x += AbstractClassPlatform.speed
         else:
-            self.__rect.x = randint(self.__screen_width + 100, self.__screen_width + 1000)
-            self.__collision = False
+            self.__rect.x = randint(self.__screen_width + 100, self.__screen_width + 8000)
+            self.re_position = False
 
     def __listen_for_collision(self):
         if self.__rect.x < AbstractGeneralCharacter.x < self.__rect.x + self.__rect.width or self.__rect.x <\
                 AbstractGeneralCharacter.x + AbstractGeneralCharacter.width < self.__rect.x + self.__rect.width:
             if self.__rect.y < AbstractGeneralCharacter.y + AbstractGeneralCharacter.height - 30:
                 self.__collision = True
+                self.re_position = True
 
     def get_rect(self):
         return self.__rect
 
     def run(self):
-        self.__move()
         self.__listen_for_collision()
+        self.__move()
 
 
 class AbstractGui:
@@ -61,6 +66,15 @@ class AbstractGiftCurse:
 
     def is_collision(self):
         return self.__mechanics.is_collision()
+
+    def end_collision(self):
+        self.__mechanics.end_collision()
+
+    def get_rect(self):
+        return self.__mechanics.get_rect()
+
+    def set_reposition(self, value):
+        self.__mechanics.re_position = value
 
     def run(self):
         self.__gui.update_rect(self.__mechanics.get_rect())

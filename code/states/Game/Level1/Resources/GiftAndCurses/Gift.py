@@ -15,6 +15,7 @@ class Gift(AbstractGiftCurse):
     def exe(self):
         if self.is_collision():
             self.__add_charge_battery()
+            self.end_collision()
 
         self.run()
 

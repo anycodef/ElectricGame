@@ -1,17 +1,15 @@
 from pygame.image import load
 from code.globals.constanst import join, path_root_project
-
 from pygame import KEYDOWN, KEYUP, K_SPACE
-
 from code.globals.Effects.arcVoltaic import ArcVoltaic, Point, CoordSys
-
 from pygame.mouse import get_pos, get_pressed
-
 from random import choice
+
+from code.states.Game.Level1.Resources.Battery import ModifierPercentageCharge
 
 
 class AbstractArcVoltaicWeaponCollision:
-    list_rect_for_collision = []
+    list_function_shoot = []
 
 
 class AbstractMechanicsGui:
@@ -42,12 +40,14 @@ class ArcVoltaicWeaponMechanics(AbstractArcVoltaicWeaponCollision, AbstractMecha
 
     @staticmethod
     def set_random_goal():
-        if AbstractArcVoltaicWeaponCollision.list_rect_for_collision:
-            goal = choice(AbstractArcVoltaicWeaponCollision.list_rect_for_collision)
-            AbstractMechanicsGui.x, AbstractMechanicsGui.y = goal
-            AbstractArcVoltaicWeaponCollision.list_rect_for_collision.remove(goal)
+        if AbstractArcVoltaicWeaponCollision.list_function_shoot:
+            function_shoot_goal_return_position = choice(AbstractArcVoltaicWeaponCollision.list_function_shoot)
+            AbstractMechanicsGui.x, AbstractMechanicsGui.y = function_shoot_goal_return_position()
+            AbstractArcVoltaicWeaponCollision.list_function_shoot.remove(function_shoot_goal_return_position)
         else:
             AbstractMechanicsGui.x, AbstractMechanicsGui.y = None, None
+
+        print(AbstractArcVoltaicWeaponCollision.list_function_shoot.__len__())
 
 
 class ArcVoltaicWeaponGui(AbstractMechanicsGui, AbstractFacturesWeapon):
@@ -61,7 +61,7 @@ class ArcVoltaicWeaponGui(AbstractMechanicsGui, AbstractFacturesWeapon):
                 AbstractFacturesWeapon.x + AbstractFacturesWeapon.X_SHOOT,
                 AbstractFacturesWeapon.y + AbstractFacturesWeapon.Y_SHOOT)),
                                     Point(*self.__sysCord.coord_pygame_to_coord_system(
-                                        AbstractMechanicsGui.x, AbstractMechanicsGui.y)))
+                                        AbstractMechanicsGui.x, AbstractMechanicsGui.y)), 20, 2)
 
 
 class ArcVoltaicWeapon:
@@ -133,6 +133,10 @@ class Weapon:
         else:
             self.__x_shoot = 0
 
+    def __battery_less_charge(self):
+        if self.__shooting and AbstractMechanicsGui.x and AbstractMechanicsGui.y:
+            ModifierPercentageCharge.decrease_level_battery(-2)
+
     def __show(self, current_direction):
         self.__screen.blit(self.__img[current_direction], (AbstractFacturesWeapon.x + self.__x_shoot,
                                                            AbstractFacturesWeapon.y))
@@ -145,6 +149,7 @@ class Weapon:
     def run(self, x_character, y_character, current_direction):
         self.update_position(x_character, y_character, current_direction)
         self.__shoot()
+        self.__battery_less_charge()
         self.__show(current_direction)
 
         if self.__shooting:
