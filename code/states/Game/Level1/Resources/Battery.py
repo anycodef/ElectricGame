@@ -1,44 +1,64 @@
-from pygame.image import load
-from pygame.transform import scale
-
 from code.globals.constanst import path_root_project, join
+from pygame import Rect
+from pygame.image import load
 
 
-def scale_images(list_images: list, width: int):
-    height = width / list_images[0].get_width() * list_images[0].get_height()
+class AbstractBattery:
+    level_of_battery = 100
 
-    for index_image in range(list_images.__len__()):
-        list_images[index_image] = scale(list_images[index_image], (width, height))
+
+class ModifierPercentageCharge:
+    @staticmethod
+    def increase_level_battery():
+        if AbstractBattery.level_of_battery < 100:
+            AbstractBattery.level_of_battery += 5
+
+    @staticmethod
+    def decrease_level_battery():
+        if AbstractBattery.level_of_battery > 0:
+            AbstractBattery.level_of_battery -= 5
+
+
+class BatteryGui:
+    rect = Rect(20, 0, 0, 0)
+
+
+class Gui(BatteryGui):
+    def __init__(self, screen):
+        self.__screen = screen
+
+        self.__n_sprites = 7
+        self.__sprite = [load(join(path_root_project, 'src', 'batteryStatus',
+                                   f'battery{i}.png')) for i in range(self.__n_sprites)]
+
+        self.__range_img = 100 / self.__n_sprites
+
+        BatteryGui.rect.width = self.__sprite[0].get_width()
+        BatteryGui.rect.height = self.__sprite[0].get_height()
+
+    def show(self):
+        self.__screen.blit(self.__sprite[int(AbstractBattery.level_of_battery / self.__range_img) - 1],
+                           (BatteryGui.rect.x, BatteryGui.rect.y))
+
+
+class Mechanics(BatteryGui):
+    def __init__(self, screen_height):
+        self.__space_button_top = 100
+        self.__floor_top = screen_height - self.__space_button_top - BatteryGui.rect.height
+
+        BatteryGui.rect.y = self.__floor_top - (self.__floor_top -
+                                                self.__space_button_top) * AbstractBattery.level_of_battery / 100
+
+    def run(self):
+        BatteryGui.rect.y = self.__floor_top - (self.__floor_top -
+                                                self.__space_button_top) * AbstractBattery.level_of_battery / 100
 
 
 class Battery:
     def __init__(self, screen):
-        self.__screen = screen
-
-        self.__width = 200
-        self.__list_img_battery = [load(join(path_root_project, 'src', 'batteryStatus', f'battery{i}.png'))
-                                   for i in range(7)]
-        scale_images(self.__list_img_battery, self.__width)
-
-        self.__index_image = 0
-        self.add = 1
-
-        self.complete = False
-        self.void = False
-
-    def add_charge(self):
-        if self.__index_image != self.__list_img_battery.__len__() - 1:
-            self.__index_image += 1
-
-    def less_charge(self):
-        if self.__index_image != 0:
-            self.__index_image -= 1
-
-    def __listen_state_battery(self):
-        pass
+        self.__gui = Gui(screen)
+        self.__mechanics = Mechanics(screen.get_rect().height)
 
     def run(self):
-        self.__screen.blit(self.__list_img_battery[self.__index_image], (100, 100))
-
-
-
+        self.__gui.show()
+        self.__mechanics.run()
