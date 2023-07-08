@@ -19,22 +19,35 @@ class Mechanics:
         self.__collision = False  # with character
 
     def __listen_for_collision(self):
-        if (self.__rect.x < AbstractGeneralCharacter.x < self.__rect.x + self.__rect.width or self.__rect.x < \
-                AbstractGeneralCharacter.x + AbstractGeneralCharacter.width < self.__rect.x + self.__rect.width) or (False):
-            print("collision mechanics")
+        if self.__rect.x < AbstractGeneralCharacter.x < self.__rect.x + self.__rect.width or \
+                self.__rect.x < AbstractGeneralCharacter.x + AbstractGeneralCharacter.width < \
+                self.__rect.x + self.__rect.width:
             self.__collision = True
             self.__re_position = True
 
+    def __is_out_screen(self):
+        if AbstractClassPlatform.direction == 'left':
+            return self.__rect.x + self.__rect.width > 0
+        else:
+            return self.__rect.x < self.__width_screen
+
+    def __position(self):
+        if AbstractClassPlatform.direction == 'left':
+            # self.__rect.x = randint(self.__width_screen + 10000, self.__width_screen + 100000)
+            self.__rect.x = randint(self.__width_screen + 1000, self.__width_screen + 10000)
+        else:
+            # self.__rect.x = randint(-100, -10)
+            self.__rect.x = randint(-10000, -1000)
+
     def __move(self):
-        if self.__rect.x + self.__rect.width > 0 and not self.__re_position:
+        if self.__is_out_screen() and not self.__re_position:
             self.__rect.x += AbstractClassPlatform.speed
 
             if self.listen_fired not in AbstractArcVoltaicWeaponCollision.list_function_shoot:
                 AbstractArcVoltaicWeaponCollision.list_function_shoot.append(self.listen_fired)
 
         else:
-            # self.__rect.x = randint(self.__width_screen + 10000, self.__width_screen + 100000)
-            self.__rect.x = randint(self.__width_screen + 10, self.__width_screen + 100)
+            self.__position()
             self.__re_position = False
 
     def listen_fired(self):  # add to the list_collision_weapon

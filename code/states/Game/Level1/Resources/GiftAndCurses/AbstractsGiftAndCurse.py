@@ -29,7 +29,7 @@ class AbstractMechanics:
         self.__rect.x += AbstractClassPlatform.speed
 
     def __verify_out_screen_left(self):
-        if self.__rect.x + self.__rect.width > 0 or self.re_position:
+        if self.__rect.x + self.__rect.width < 0 or self.re_position:
             self.__rect.x = randint(self.__screen_width + 100, self.__screen_width + 8000)
             self.re_position = False
 

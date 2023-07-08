@@ -19,11 +19,15 @@ class AbstractMechanicsGui:
 class AbstractFacturesWeapon:
     X_RELATIVE = {
         'right': 17,
-        'left': 8
+        'left': 6
     }
     Y_RELATIVE = 55
 
-    X_SHOOT, Y_SHOOT = 50, 9
+    X_SHOOT = {
+        'right': 50,
+        'left': 9
+    }
+    Y_SHOOT = 9
 
     x, y = 0, 0
 
@@ -54,10 +58,10 @@ class ArcVoltaicWeaponGui(AbstractMechanicsGui, AbstractFacturesWeapon):
         self.__arc_voltaic = ArcVoltaic(screen)
         self.__sysCord = CoordSys(screen.get_width(), screen.get_height())
 
-    def show(self):
+    def show(self, current_direction):
         if AbstractMechanicsGui.x and AbstractMechanicsGui.y:
             self.__arc_voltaic.show(10, Point(*self.__sysCord.coord_pygame_to_coord_system(
-                AbstractFacturesWeapon.x + AbstractFacturesWeapon.X_SHOOT,
+                AbstractFacturesWeapon.x + AbstractFacturesWeapon.X_SHOOT[current_direction],
                 AbstractFacturesWeapon.y + AbstractFacturesWeapon.Y_SHOOT)),
                                     Point(*self.__sysCord.coord_pygame_to_coord_system(
                                         AbstractMechanicsGui.x, AbstractMechanicsGui.y)), 20, 2)
@@ -74,8 +78,8 @@ class ArcVoltaicWeapon:
     def set_random_goal(self):
         self.__mechanics.set_random_goal()
 
-    def run(self):
-        self.__gui.show()
+    def run(self, current_direction):
+        self.__gui.show(current_direction)
 
 
 class Weapon:
@@ -134,7 +138,7 @@ class Weapon:
 
     def __battery_less_charge(self):
         if self.__shooting and AbstractMechanicsGui.x and AbstractMechanicsGui.y:
-            ModifierPercentageCharge.decrease_level_battery(-2)
+            ModifierPercentageCharge.decrease_level_battery(-.2)
 
     def __show(self, current_direction):
         self.__screen.blit(self.__img[current_direction], (AbstractFacturesWeapon.x + self.__x_shoot,
@@ -152,7 +156,7 @@ class Weapon:
         self.__show(current_direction)
 
         if self.__shooting:
-            self.__arc.run()
+            self.__arc.run(current_direction)
 
 
 

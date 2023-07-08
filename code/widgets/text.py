@@ -58,9 +58,11 @@ class CardText:
 
         # list words image for put in card
         self.list_img_word = text_to_words_img_list(text, t_color, b_color, s_text, n_font)
-        self.list_of_list_img_word_with_position, self.height_card = generate_list_pos_of_all_img_words_return_height_card(
-            self.x_card, self.y_card, self.width_card, self.list_img_word, self.padding,
-            self.space_between_lines_words, self.space_between_words)
+        self.list_of_list_img_word_with_position, self.height_card = \
+            generate_list_pos_of_all_img_words_return_height_card(self.x_card, self.y_card, self.width_card,
+                                                                  self.list_img_word, self.padding,
+                                                                  self.space_between_lines_words,
+                                                                  self.space_between_words)
 
     def set_pos(self, speed_y):
 
@@ -80,7 +82,6 @@ class CardText:
         for img_w, pos in self.list_of_list_img_word_with_position:
             if -img_w.get_height() < pos[1] < self.screen.get_height():
                 self.screen.blit(img_w, pos)
-
 
 
 """

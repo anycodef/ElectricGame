@@ -142,8 +142,8 @@ class ManageSpriteCharacter(AbstractGeneralCharacter):
             self.__index_img = 0
             self.__current_state = states[0]
 
-        if self.__index_img + 1 != self.__loader_img.figure_image[states[0]][
-            AbstractGeneralCharacter.direction].__len__():
+        if self.__index_img + 1 != \
+                self.__loader_img.figure_image[states[0]][AbstractGeneralCharacter.direction].__len__():
             self.__index_img += 1
         else:
             if states.__len__() > 1:
