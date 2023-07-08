@@ -3,6 +3,7 @@ from code.states.Game.BasicStateLevel import BasicStateLevel
 from code.states.Game.Level1.Resources.Platform import Platform
 from code.states.Game.Level1.Resources.GiftAndCurses.ManagerGiftCurse import ManagerGiftCurse
 from code.states.Game.Level1.Resources.Battery import Battery
+from code.states.Game.Level1.Resources.Portals.ManagerPortals import ManagerPortals
 
 from pygame.display import flip
 
@@ -15,6 +16,7 @@ class StateLevel1(BasicStateLevel):
 
         self.platform = Platform(screen)
         self.manager_gift_curse = ManagerGiftCurse(screen)
+        self.manager_portals = ManagerPortals(screen)
 
     def run(self):
         while self.list_class_obj_return == [None, None]:
@@ -25,6 +27,7 @@ class StateLevel1(BasicStateLevel):
             self.platform.run()
 
             self.manager_gift_curse.run()
+            self.manager_portals.run()
 
             self.battery.run()
 

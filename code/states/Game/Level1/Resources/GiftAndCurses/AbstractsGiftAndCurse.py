@@ -14,6 +14,11 @@ class AbstractMechanics:
         self.__collision = False
         self.re_position = False
 
+        self.__verify_out_screen = {
+            'right': self.__verify_out_screen_right,
+            'left': self.__verify_out_screen_left
+        }
+
     def is_collision(self):
         return self.__collision
 
@@ -21,10 +26,16 @@ class AbstractMechanics:
         self.__collision = False
 
     def __move(self):
-        if self.__rect.x + self.__rect.width > 0 and not self.re_position:
-            self.__rect.x += AbstractClassPlatform.speed
-        else:
+        self.__rect.x += AbstractClassPlatform.speed
+
+    def __verify_out_screen_left(self):
+        if self.__rect.x + self.__rect.width > 0 or self.re_position:
             self.__rect.x = randint(self.__screen_width + 100, self.__screen_width + 8000)
+            self.re_position = False
+
+    def __verify_out_screen_right(self):
+        if self.__rect.x > self.__screen_width or self.re_position:
+            self.__rect.x = randint(-8000, -100)
             self.re_position = False
 
     def __listen_for_collision(self):
@@ -39,6 +50,7 @@ class AbstractMechanics:
 
     def run(self):
         self.__listen_for_collision()
+        self.__verify_out_screen[AbstractClassPlatform.direction]()
         self.__move()
 
 

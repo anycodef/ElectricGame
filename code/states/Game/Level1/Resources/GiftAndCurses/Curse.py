@@ -29,7 +29,6 @@ class Curse(AbstractGiftCurse):
 
     def exe(self):
         if self.is_collision():
-            print("Curse")
             self.__less_charge_battery()
             self.end_collision()
 

@@ -18,7 +18,8 @@ class AbstractMechanicsGui:
 
 class AbstractFacturesWeapon:
     X_RELATIVE = {
-        'right': 17
+        'right': 17,
+        'left': 8
     }
     Y_RELATIVE = 55
 
@@ -46,8 +47,6 @@ class ArcVoltaicWeaponMechanics(AbstractArcVoltaicWeaponCollision, AbstractMecha
             AbstractArcVoltaicWeaponCollision.list_function_shoot.remove(function_shoot_goal_return_position)
         else:
             AbstractMechanicsGui.x, AbstractMechanicsGui.y = None, None
-
-        print(AbstractArcVoltaicWeaponCollision.list_function_shoot.__len__())
 
 
 class ArcVoltaicWeaponGui(AbstractMechanicsGui, AbstractFacturesWeapon):

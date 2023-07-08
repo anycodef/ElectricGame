@@ -7,6 +7,8 @@ from pygame import KEYDOWN, K_UP
 from code.states.Game.Level1.Resources.weapon import Weapon
 from pygame.rect import Rect
 
+from code.states.Game.Level1.Resources.Platform import AbstractClassPlatform
+
 
 # class for load all frames of the main character
 class LoaderImgCharacter:
@@ -17,7 +19,7 @@ class LoaderImgCharacter:
                                          {'action': 'jump', 'nFrames': 6}]
 
         # directions. As this is a game in 2d then the possibilities is a right and left
-        self.__direction = ['right']
+        self.__direction = ['right', 'left']
 
         # the images will be load on the dictionary and will have a follow structure
         # {'action': {'left': [img_1, img_2, ..., img_n], 'right': [img_1, img_2, ..., img_n]}
@@ -38,12 +40,17 @@ class LoaderImgCharacter:
                     self.figure_image[action][direction].append(
                         load(join(root_path, f"{action}{i}-{direction}.png")))
 
+                    if not (AbstractGeneralCharacter.width and AbstractGeneralCharacter.height):
+                        AbstractGeneralCharacter.width, AbstractGeneralCharacter.height = \
+                            self.figure_image[action][direction][0].get_width(), \
+                            self.figure_image[action][direction][0].get_height()
+
 
 class AbstractGeneralCharacter:
     x, y = 0, 0
     width, height = 0, 0
     update = False
-    rect_character = Rect(x, y, width, height)
+    direction = 'right'
 
 
 # This class is a controller of the position of sprites. This class modify the current position of character
@@ -85,6 +92,11 @@ class CharacterMechanisms(AbstractGeneralCharacter):
 
     # This method is on the class parent while's.
     def run(self, state):
+        if AbstractClassPlatform.direction == 'left':
+            AbstractGeneralCharacter.direction = 'right'
+        else:
+            AbstractGeneralCharacter.direction = 'left'
+
         # manage states: The structure of state is as this: [[act1, act2, ..., actn], ..., [act1, act2, ..., actn]]
         if AbstractGeneralCharacter.update:
             self.__actions[state[0]]()  # execute the correct method for the given state
@@ -99,9 +111,6 @@ class ManageSpriteCharacter(AbstractGeneralCharacter):
         self.__loader_img.load(join(path_root_project, 'src', 'sprite', 'mainPerson'))
         self.__screen = screen
 
-        AbstractGeneralCharacter.x = .25 * screen.get_width()
-        AbstractGeneralCharacter.y = screen.get_height() - 418
-
         # for exchange frames
         self.__index_img = 0
         self.__current_state = None
@@ -115,31 +124,34 @@ class ManageSpriteCharacter(AbstractGeneralCharacter):
     def get_state(self):
         return self.__current_state
 
-    def __set_img_action_loop(self, states, current_direction):
+    def __set_img_action_loop(self, states):
         if self.__current_state != states[0]:
             self.__index_img = 0
             self.__current_state = states[0]
 
         self.__index_img += 1
 
-        if self.__index_img == self.__loader_img.figure_image[states[0]][current_direction].__len__():
+        if self.__index_img == self.__loader_img.figure_image[states[0]][AbstractGeneralCharacter.direction].__len__():
             self.__index_img = 0
 
-        self.__current_img = self.__loader_img.figure_image[states[0]][current_direction][self.__index_img]
+        self.__current_img = \
+            self.__loader_img.figure_image[states[0]][AbstractGeneralCharacter.direction][self.__index_img]
 
-    def __set_img_action_keep_last_frame(self, states, current_direction):
+    def __set_img_action_keep_last_frame(self, states):
         if self.__current_state != states[0]:
             self.__index_img = 0
             self.__current_state = states[0]
 
-        if self.__index_img + 1 != self.__loader_img.figure_image[states[0]][current_direction].__len__():
+        if self.__index_img + 1 != self.__loader_img.figure_image[states[0]][
+            AbstractGeneralCharacter.direction].__len__():
             self.__index_img += 1
         else:
             if states.__len__() > 1:
                 states.remove(states[0])
                 self.__index_img = 0
 
-        self.__current_img = self.__loader_img.figure_image[states[0]][current_direction][self.__index_img]
+        self.__current_img = \
+            self.__loader_img.figure_image[states[0]][AbstractGeneralCharacter.direction][self.__index_img]
 
     def __show(self):
         AbstractGeneralCharacter.width = self.__current_img.get_width()
@@ -148,9 +160,18 @@ class ManageSpriteCharacter(AbstractGeneralCharacter):
 
         self.__screen.blit(self.__current_img, (AbstractGeneralCharacter.x, AbstractGeneralCharacter.y))
 
-    def run(self, states, current_direction):
+    def run(self, states):
+
+        if AbstractGeneralCharacter.y is 0:
+            AbstractGeneralCharacter.y = AbstractClassPlatform.y - AbstractGeneralCharacter.height
+
+        if AbstractGeneralCharacter.direction == 'left':
+            AbstractGeneralCharacter.x = .75 * self.__screen.get_width()
+        else:
+            AbstractGeneralCharacter.x = .25 * self.__screen.get_width()
+
         if AbstractGeneralCharacter.update:
-            self.__actions[states[0]](states, current_direction)
+            self.__actions[states[0]](states)
         self.__show()
 
 
@@ -161,7 +182,6 @@ class Character:
         self.accessories = [Weapon(screen)]
 
         self.states = ['run']
-        self.current_direction = 'right'
 
         self.__mechanisms = CharacterMechanisms()
         self.__manager_sprite = ManageSpriteCharacter(screen)
@@ -172,6 +192,7 @@ class Character:
         self.__counter_space_time = self.__get_current_fps() + self.__FPS
 
     def exe(self):
+
         if self.__counter_space_time > self.__get_current_fps() / self.__FPS:
             AbstractGeneralCharacter.update = True
             self.__counter_space_time = 0
@@ -180,10 +201,10 @@ class Character:
             self.__counter_space_time += 1
 
         self.__mechanisms.run(self.states)
-        self.__manager_sprite.run(self.states, self.current_direction)
+        self.__manager_sprite.run(self.states)
 
         for _ in self.accessories:
-            _.run(AbstractGeneralCharacter.x, AbstractGeneralCharacter.y, self.current_direction)
+            _.run(AbstractGeneralCharacter.x, AbstractGeneralCharacter.y, AbstractGeneralCharacter.direction)
 
 
 class CharacterUser(Character):
