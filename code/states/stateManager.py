@@ -49,11 +49,15 @@ class StateManager:
 
             # Instance a class state
             if self.__class_state:
+                if self.__objet_state:
+                    del self.__objet_state
+
                 self.__objet_state = self.__class_state(self.__screen.obj, self.__exchanger_interface)
                 self.__class_state = None
 
             # Run state and wait for a new class state
             self.__class_state, self.__objet_state_next = self.__objet_state.run()
+
             if self.__objet_state_next:
                 self.__objet_state = self.__objet_state_next
                 self.__objet_state_next = None

@@ -5,9 +5,10 @@ from pygame import KEYDOWN, K_UP
 
 # accessories
 from code.states.Game.Level1.Resources.weapon import Weapon
-from pygame.rect import Rect
 
 from code.states.Game.Level1.Resources.Platform import AbstractClassPlatform
+
+from code.states.Game.Level1.Resources.Battery import AbstractBattery
 
 
 # class for load all frames of the main character
@@ -89,6 +90,7 @@ class CharacterMechanisms(AbstractGeneralCharacter):
 
     def __set_stop(self):
         self.__speed[0] = 0
+        self.__speed[1] = 0
 
     # This method is on the class parent while's.
     def run(self, state):
@@ -162,7 +164,7 @@ class ManageSpriteCharacter(AbstractGeneralCharacter):
 
     def run(self, states):
 
-        if AbstractGeneralCharacter.y is 0:
+        if AbstractGeneralCharacter.y == 0:
             AbstractGeneralCharacter.y = AbstractClassPlatform.y - AbstractGeneralCharacter.height
 
         if AbstractGeneralCharacter.direction == 'left':
@@ -193,6 +195,9 @@ class Character:
 
     def exe(self):
 
+        if AbstractBattery.level_of_battery == 0:
+            self.states = ['dead']
+
         if self.__counter_space_time > self.__get_current_fps() / self.__FPS:
             AbstractGeneralCharacter.update = True
             self.__counter_space_time = 0
@@ -203,8 +208,9 @@ class Character:
         self.__mechanisms.run(self.states)
         self.__manager_sprite.run(self.states)
 
-        for _ in self.accessories:
-            _.run(AbstractGeneralCharacter.x, AbstractGeneralCharacter.y, AbstractGeneralCharacter.direction)
+        if 'dead' not in self.states:
+            for _ in self.accessories:
+                _.run(AbstractGeneralCharacter.x, AbstractGeneralCharacter.y, AbstractGeneralCharacter.direction)
 
 
 class CharacterUser(Character):
@@ -224,3 +230,13 @@ class CharacterUser(Character):
     def execution(self, queue_event):
         self.__manage_event(queue_event)
         self.exe()
+
+    def __del__(self):
+        AbstractGeneralCharacter.x = 0
+        AbstractGeneralCharacter.y = 0
+        AbstractGeneralCharacter.width = 0
+        AbstractGeneralCharacter.height = 0
+        AbstractGeneralCharacter.update = False
+        AbstractGeneralCharacter.direction = 'right'
+
+

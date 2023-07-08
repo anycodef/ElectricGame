@@ -107,3 +107,7 @@ class Battery:
     def run(self):
         self.__gui.show()
         self.__mechanics.run()
+
+    def __del__(self):
+        AbstractBattery.level_of_battery = 100
+        BatteryGui.rect = Rect(20, 0, 0, 0)

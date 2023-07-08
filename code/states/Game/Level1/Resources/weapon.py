@@ -158,5 +158,16 @@ class Weapon:
         if self.__shooting:
             self.__arc.run(current_direction)
 
+    def __del__(self):
+        AbstractArcVoltaicWeaponCollision.list_function_shoot = []
+
+        AbstractMechanicsGui.x = None
+        AbstractMechanicsGui.y = None
+
+        AbstractFacturesWeapon.x = 0
+        AbstractFacturesWeapon.y = 0
+
+
+
 
 

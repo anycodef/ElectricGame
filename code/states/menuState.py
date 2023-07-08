@@ -7,6 +7,8 @@ from pygame import QUIT
 from code.globals.generalState import BasicState
 from code.globals.constanst import EXIT_PROGRAM
 
+from code.states.Game.Level1.Resources.Battery import AbstractBattery
+
 
 # This state define an interface where
 class MenuState(BasicState):

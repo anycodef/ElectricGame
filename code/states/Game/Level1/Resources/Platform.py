@@ -3,6 +3,8 @@ from pygame.image import load
 
 from code.states.Game.Level1.Resources.Portals.AbstractPortalVerticalHorizontal import *
 
+from code.states.Game.Level1.Resources.Battery import AbstractBattery
+
 
 class AbstractClassPlatform:
     y = 0
@@ -75,6 +77,10 @@ class MechanicsPlatform(AbstractClassPlatform):
             AbstractClassPlatform.position_blocks[index][0] += AbstractClassPlatform.speed
         self.__check_position[AbstractClassPlatform.direction]()
 
+    @staticmethod
+    def GameOver():
+        AbstractClassPlatform.speed = 0
+
 
 class GuiPlatform(AbstractClassPlatform):
     def __init__(self, screen):
@@ -97,3 +103,15 @@ class Platform:
     def run(self):
         self.__mechanics.move()
         self.__gui.show()
+
+        if AbstractBattery.level_of_battery == 0:
+            self.__mechanics.GameOver()
+
+    def __del__(self):
+        AbstractClassPlatform.y = 0
+        AbstractClassPlatform.position_blocks = []
+        AbstractClassPlatform.speed = -10
+        AbstractClassPlatform.directions = {-1: 'left',
+                                           1: 'right'}
+        AbstractClassPlatform.key_direction = -1
+        AbstractClassPlatform.direction = AbstractClassPlatform.directions[AbstractClassPlatform.key_direction]
