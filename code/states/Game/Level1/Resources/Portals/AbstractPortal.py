@@ -12,7 +12,7 @@ class Mechanics:
         self.__rect = rect
         self.__width_screen = width_screen
 
-        self.__all_shoot = 5
+        self.__all_shoot = 10
         self.__shoot_count = 0
 
         self.__re_position = False
@@ -33,8 +33,8 @@ class Mechanics:
 
     def __position(self):
         if AbstractClassPlatform.direction == 'left':
-            # self.__rect.x = randint(self.__width_screen + 10000, self.__width_screen + 100000)
-            self.__rect.x = randint(self.__width_screen + 1000, self.__width_screen + 10000)
+            self.__rect.x = randint(self.__width_screen + 10000, self.__width_screen + 100000)
+            # self.__rect.x = randint(self.__width_screen + 1000, self.__width_screen + 10000)
         else:
             # self.__rect.x = randint(-100, -10)
             self.__rect.x = randint(-10000, -1000)
