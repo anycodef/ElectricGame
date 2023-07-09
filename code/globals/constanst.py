@@ -13,42 +13,28 @@ description_for_objects = [
         'name': 'Jaula de Faraday',
         'description': 'Es una estructura metálica diseñada para bloquear el campo electromagnético en su interiorelectromagnético en su interioelectromagnético en su interioelectromagnético en su interioelectromagnético en su interioelectromagnético en su interioelectromagnético en su interioelectromagnético en su interioelectromagnético en su interioelectromagnético en su interioelectromagnético en su interioelectromagnético en su interio.',
         'image': {
-            'filename': join(path_root_project, 'src', 'liveSavers', 'faraday_cage.png')
+            'filename': join(path_root_project, 'src', 'rules', 'gift.png')
         }
     },
     {
         'name': 'Jaula de Faraday',
         'description': 'Es una estructura metálica electromagnético en su interioelectromagnético en su interioelectromagnético en su interioelectromagnético en su interio Ldiseñada para bloquear el campo electromagnético en su interior.',
         'image': {
-            'filename': join(path_root_project, 'src', 'liveSavers', 'faraday_cage.png')
+            'filename': join(path_root_project, 'src', 'rules', 'course.png')
         }
     },
     {
         'name': 'Jaula de Faraday',
         'description': 'Es una estructura metálica diseñada para bloquear el campo electromagnético en su interiorelectromagnético en su interioelectromagnético en su interioelectromagnético en su interioelectromagnético en su interioelectromagnético en su interioelectromagnético en su interioelectromagnético en su interioelectromagnético en su interioelectromagnético en su interioelectromagnético en su interioelectromagnético en su interio.',
         'image': {
-            'filename': join(path_root_project, 'src', 'liveSavers', 'faraday_cage.png')
+            'filename': join(path_root_project, 'src', 'rules', 'character.png')
         }
     },
     {
         'name': 'Jaula de Faraday',
         'description': ' interioelectromagnético en su interio.',
         'image': {
-            'filename': join(path_root_project, 'src', 'liveSavers', 'faraday_cage.png')
-        }
-    },
-    {
-        'name': 'Jaula',
-        'description': 'en  estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear el campo electromagnético en sus una estructura metálica diseñada para bloquear el campo electromagnético en sus una estructura metálica diseñada para bloquear el campo electromagnético en sucampo electromagnético en sus una estructura metálica diseñada para bloquear el campo electromagnético en su.',
-        'image': {
-            'filename': join(path_root_project, 'src', 'liveSavers', 'faraday_cage.png')
-        }
-    },
-    {
-        'name': 'Paolo',
-        'description': 'ica diseñadaestructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloque: eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear eluna estructura metálica diseñada para bloquear el campo electromagnético en sus una estructura metálica diseñada para bloquear el campo electromagnético en sus una estructura metálica diseñada para bloquear el campo electromagnético en sucampo electromagnético en sus una estructura metálica diseñada para bloquear el campo electromagnético en su.',
-        'image': {
-            'filename': join(path_root_project, 'src', 'liveSavers', 'faraday_cage.png')
+            'filename': join(path_root_project, 'src', 'rules', 'battery.png')
         }
     }
 ]
