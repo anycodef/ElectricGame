@@ -9,7 +9,7 @@ from code.states.Game.Level1.Resources.Battery import AbstractBattery
 class AbstractClassPlatform:
     y = 0
     position_blocks = []
-    speed = -5
+    speed = -10
 
     directions = {-1: 'left',
                   1: 'right'}
@@ -110,7 +110,7 @@ class Platform:
     def __del__(self):
         AbstractClassPlatform.y = 0
         AbstractClassPlatform.position_blocks = []
-        AbstractClassPlatform.speed += -1
+        AbstractClassPlatform.speed = -10
         AbstractClassPlatform.directions = {-1: 'left',
                                             1: 'right'}
         AbstractClassPlatform.key_direction = -1
